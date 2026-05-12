@@ -81,7 +81,6 @@
                         {{ \Carbon\Carbon::parse($dataSelecionada)->translatedFormat('F, Y') }}
                     </div>
                     <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center;">
-                        {{-- Cabeçalho Padrão Brasil --}}
                         @foreach(['D', 'S', 'T', 'Q', 'Q', 'S', 'S'] as $diaSemana)
                             <span class="text-[9px] font-black text-zinc-700 uppercase mb-2">{{ $diaSemana }}</span>
                         @endforeach
@@ -90,15 +89,13 @@
                             $dataBase = \Carbon\Carbon::parse($dataSelecionada);
                             $primeiroDiaDoMes = $dataBase->copy()->startOfMonth();
                             $diasNoMes = $primeiroDiaDoMes->daysInMonth;
-                            $pularDias = $primeiroDiaDoMes->dayOfWeek; // 0 (Dom) até 6 (Sab)
+                            $pularDias = $primeiroDiaDoMes->dayOfWeek;
                         @endphp
 
-                        {{-- Alinhamento do Início do Mês --}}
                         @for ($i = 0; $i < $pularDias; $i++)
                             <span></span>
                         @endfor
 
-                        {{-- Dias do Mês --}}
                         @for ($dia = 1; $dia <= $diasNoMes; $dia++)
                             @php
                                 $dataIteracao = $dataBase->copy()->day($dia);
@@ -163,6 +160,16 @@
                                         <td class="py-6 px-10 text-right">
                                             <div class="flex justify-end gap-2">
                                                 @if($reserva->status == 'confirmed' || $reserva->status == 'pending')
+                                                    @php
+                                                        $telefoneReserva = preg_replace('/[^0-9]/', '', $reserva->user->whatsapp ?? '');
+                                                        $msgLembrete = "Olá, " . ($reserva->user->name ?? $reserva->client_name) . "! 💈 Lembrete da Barber Nathan: seu horário para " . $reserva->service->name . " está confirmado para hoje às " . $reserva->time . ". Te esperamos!";
+                                                        $urlLembrete = "https://wa.me/55" . $telefoneReserva . "?text=" . urlencode($msgLembrete);
+                                                    @endphp
+
+                                                    <a href="{{ $urlLembrete }}" target="_blank" title="Lembrete WhatsApp" class="w-8 h-8 rounded-lg bg-green-500/10 text-green-500 flex items-center justify-center hover:bg-green-500 hover:text-black transition-all">
+                                                        <i class="fab fa-whatsapp text-[12px]"></i>
+                                                    </a>
+
                                                     <form action="{{ route('admin.appointments.updateStatus', $reserva->id) }}" method="POST">
                                                         @csrf @method('PATCH')
                                                         <input type="hidden" name="status" value="finished">

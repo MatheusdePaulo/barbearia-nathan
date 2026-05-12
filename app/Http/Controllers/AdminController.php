@@ -25,6 +25,7 @@ class AdminController extends Controller
             'cancelados'  => Appointment::where('status', 'canceled')->count(),
         ];
 
+        // Carregamos o usuário e o serviço para evitar o erro de N/A
         $proximasReservas = Appointment::with(['user', 'service'])
             ->whereDate('date', now())
             ->whereIn('status', ['confirmed', 'pending'])
@@ -74,6 +75,41 @@ class AdminController extends Controller
         return view('admin.agenda', compact('reservas', 'hojeCount', 'mesCount', 'faturamentoDia', 'dataSelecionada'));
     }
 
+    /**
+     * Processa o agendamento manual (Avulso) feito pelo administrador
+     */
+    public function avulso(Request $request)
+    {
+        $request->validate([
+            'client_name' => 'required|string|max:255',
+            'service_id'  => 'required|exists:services,id',
+            'date'        => 'required|date',
+            'time'        => 'required',
+        ]);
+
+        Appointment::create([
+            'client_name' => $request->client_name,
+            'service_id'  => $request->service_id,
+            'date'        => $request->date,
+            'time'        => $request->time,
+            'status'      => 'confirmed', // Agendamento manual já entra como confirmado
+            'user_id'     => null,        // Não vinculado a um usuário cadastrado
+        ]);
+
+        return redirect()->back()->with('success', 'Agendamento manual realizado com sucesso!');
+    }
+
+    /**
+     * Atualiza o status do agendamento (Finalizar ou Faltou)
+     */
+    public function updateStatus(Request $request, $id)
+    {
+        $appointment = Appointment::findOrFail($id);
+        $appointment->update(['status' => $request->status]);
+
+        return redirect()->back()->with('success', 'Status atualizado!');
+    }
+
     public function birthdays()
     {
         $hoje = now();
@@ -94,7 +130,7 @@ class AdminController extends Controller
         $queryBase = Appointment::whereIn('status', ['confirmed', 'finished']);
         $queryTrans = Transaction::query();
 
-        // Filtros Temporais (Centralizados para ambas as tabelas)
+        // Filtros Temporais
         if ($filter == 'hoje') {
             $queryBase->whereDate('date', now());
             $queryTrans->whereDate('date', now());
@@ -116,29 +152,20 @@ class AdminController extends Controller
                 ->whereYear('date', now()->year);
         }
 
-        // 1. CÁLCULO DE ENTRADAS POR CATEGORIA
-
-        // Entradas de Serviços (Agendamentos + Lançamentos Manuais 'service')
         $faturamentoServicos = (clone $queryBase)
                 ->join('services', 'appointments.service_id', '=', 'services.id')
                 ->sum('services.price')
             + (clone $queryTrans)->where('type', 'income')->where('category', 'service')->sum('amount');
 
-        // Faturamento de Produtos (Tudo que for marcado como 'product' no modal)
         $faturamentoProdutos = (clone $queryTrans)
             ->where('type', 'income')
             ->where('category', 'product')
             ->sum('amount');
 
         $faturamentoTotal = $faturamentoServicos + $faturamentoProdutos;
-
-        // 2. CÁLCULO DE SAÍDAS
         $totalDespesas = (clone $queryTrans)->where('type', 'expense')->sum('amount');
-
-        // 3. SALDO REAL
         $saldoReal = $faturamentoTotal - $totalDespesas;
 
-        // Métricas de Performance
         $servicosRealizados = (clone $queryBase)->count();
         $ticketMedio = $servicosRealizados > 0 ? ($faturamentoTotal / $servicosRealizados) : 0;
 
@@ -146,7 +173,6 @@ class AdminController extends Controller
         $totalFaltas = Appointment::where('status', 'canceled')->count();
         $taxaNoShow = $totalAgendamentos > 0 ? round(($totalFaltas / $totalAgendamentos) * 100) : 0;
 
-        // GRÁFICO 1: Evolução Mensal (Melhoria: Incluindo produtos e serviços manuais no histórico)
         $labelsMensal = [];
         $dadosFaturamento = [];
         for ($i = 4; $i >= 0; $i--) {
@@ -165,7 +191,6 @@ class AdminController extends Controller
             $dadosFaturamento[] = $faturadoMesAgendamentos + $faturadoMesTransacoes;
         }
 
-        // GRÁFICO 2: Mix de Atendimentos
         $topServicos = Appointment::select('services.name', DB::raw('count(*) as total'))
             ->join('services', 'appointments.service_id', '=', 'services.id')
             ->groupBy('services.name')
@@ -176,7 +201,6 @@ class AdminController extends Controller
             'data' => $topServicos->pluck('total')->toArray() ?: [0]
         ];
 
-        // GRÁFICO 3: Comparativo (Serviços vs Produtos)
         $comparativoVendas = [
             'labels' => ['Serviços', 'Produtos'],
             'data' => [$faturamentoServicos, $faturamentoProdutos]
@@ -189,23 +213,19 @@ class AdminController extends Controller
         ));
     }
 
-    /**
-     * Método para salvar a transação vinda do modal com suporte a categoria
-     */
     public function storeTransaction(Request $request)
     {
         $request->validate([
             'description' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0.01',
             'type' => 'required|in:entrada,saida',
-            'category' => 'nullable|in:service,product' // Recebe a categoria do Modal
+            'category' => 'nullable|in:service,product'
         ]);
 
         Transaction::create([
             'description' => $request->description,
             'amount' => $request->amount,
             'type' => $request->type == 'entrada' ? 'income' : 'expense',
-            // Se for entrada, grava a categoria vinda do Modal (service ou product)
             'category' => $request->type == 'entrada' ? ($request->category ?? 'service') : 'expense',
             'date' => now(),
         ]);

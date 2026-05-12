@@ -62,9 +62,17 @@
         <form action="{{ route('appointments.store') }}" method="POST"
               x-data="{
                       paymentType: 'signal',
-                      selectedPrice: '{{ isset($selectedService) ? $selectedService->price : 0 }}'
+                      selectedPrice: {{ (isset($selectedService) && is_object($selectedService)) ? $selectedService->price : 0 }}
                   }">
             @csrf
+
+            {{-- BLOCO DE FEEDBACK DE ERRO --}}
+            @if(session('error'))
+                <div class="bg-red-500/10 border border-red-500 text-red-500 p-5 rounded-2xl mb-8 font-black uppercase text-[10px] tracking-widest italic flex items-center gap-4 animate-pulse">
+                    <i class="fas fa-exclamation-triangle text-lg"></i>
+                    <span>{{ session('error') }}</span>
+                </div>
+            @endif
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-12 items-start">
 
@@ -87,7 +95,7 @@
                         @foreach($services as $s)
                             <label class="relative flex items-center justify-between bg-[#121212] border border-zinc-800/60 p-5 rounded-2xl cursor-pointer group transition-all duration-300 hover:border-[#D4AF37]/50">
                                 <input type="radio" name="service_id" value="{{ $s->id }}" class="hidden peer" required
-                                       @click="selectedPrice = '{{ $s->price }}'"
+                                       @click="selectedPrice = {{ $s->price }}"
                                     {{ (isset($selectedService) && is_object($selectedService) && $selectedService->id == $s->id) ? 'checked' : '' }}>
 
                                 <div class="flex items-center gap-5">
@@ -112,7 +120,6 @@
                 <div class="space-y-10">
                     <div>
                         <label class="block text-zinc-500 text-[11px] font-black uppercase tracking-[0.2em] italic opacity-60 mb-4">2. Escolha a Data</label>
-                        <!-- Mudei para @change do Alpine para evitar o conflito com o submit -->
                         <input type="date" name="date" required
                                @change="window.location.href = '?date=' + $el.value"
                                class="w-full bg-[#121212] border border-zinc-800 rounded-2xl p-4.5 focus:border-[#D4AF37] outline-none transition-all text-base font-black text-white uppercase tracking-widest shadow-lg"

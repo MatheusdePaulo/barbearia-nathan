@@ -26,7 +26,6 @@
                     </div>
 
                     @php
-                        // Ajustado para usar o campo 'whatsapp' do seu Model
                         $numero = preg_replace('/[^0-9]/', '', $cliente->whatsapp ?? '');
                         $primeiroNome = explode(' ', $cliente->name)[0];
                         $mensagem = "Fala, " . $primeiroNome . "! 🎈 A Barber Nathan passando para te dar os parabéns! Para comemorar seu dia, você tem um desconto especial reservado aqui na barbearia. Vamos dar aquele tapa no visual hoje?";

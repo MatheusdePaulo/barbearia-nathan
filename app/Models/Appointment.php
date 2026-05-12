@@ -14,12 +14,13 @@ class Appointment extends Model
     protected $fillable = [
         'user_id',
         'service_id',
+        'client_name',
         'date',
         'time',
         'status',
-        'payment_id',      // Obrigatório para o MP
-        'pix_code',        // Link do copia e cola
-        'pix_qr_64',       // Imagem do QR Code
+        'payment_id',
+        'pix_code',
+        'pix_qr_64',
     ];
 
     // Relacionamento com o Usuário/Cliente
@@ -32,5 +33,16 @@ class Appointment extends Model
     public function service()
     {
         return $this->belongsTo(Service::class);
+    }
+
+    public function getWhatsAppLinkAttribute()
+    {
+        $phone = preg_replace('/\D/', '', $this->user->whatsapp); // Limpa o número
+        $time = $this->time;
+        $service = $this->service->name;
+
+        $text = "Olá {$this->user->name}, aqui é do Barber Nathan! Passando para lembrar do seu horário de {$service} hoje às {$time}. Confirmado?";
+
+        return "https://wa.me/55{$phone}?text=" . urlencode($text);
     }
 }

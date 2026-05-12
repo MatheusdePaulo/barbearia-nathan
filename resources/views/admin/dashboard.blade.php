@@ -98,7 +98,10 @@
                             <tbody class="text-zinc-300 text-xs">
                             @forelse($proximasReservas as $reserva)
                                 <tr class="border-b border-zinc-800/50">
-                                    <td class="py-4 font-bold italic whitespace-nowrap">{{ $reserva->user->name ?? 'N/A' }}</td>
+                                    {{-- AJUSTE BACK-END: Prioriza o relacionamento 'user' (cliente cadastrado) ou usa o 'client_name' (avulso) --}}
+                                    <td class="py-4 font-bold italic whitespace-nowrap">
+                                        {{ $reserva->user->name ?? ($reserva->client_name ?? 'Cliente Avulso') }}
+                                    </td>
                                     <td class="py-4 text-zinc-400 uppercase text-[10px] font-bold tracking-tighter whitespace-nowrap">{{ $reserva->service->name ?? 'Serviço' }}</td>
                                     <td class="py-4 font-mono text-[11px]">{{ $reserva->time }}</td>
                                     <td class="py-4 text-right whitespace-nowrap">
@@ -169,7 +172,7 @@
                     @endphp
                     @for ($i = 0; $i < $primeiroDiaSemana; $i++) <span></span> @endfor
                     @for ($i = 1; $i <= $ultimoDia; $i++)
-                        <span class="flex items-center justify-center text-[10px] w-7 h-7 rounded-lg {{ $i == $hoje ? 'bg-[#D4AF37] text-black font-black shadow-[0_0_15px_rgba(212,175,55,0.5)]' : 'text-zinc-500' }}">
+                        <span class="flex items-center justify-center text-[10px] w-7 h-7 rounded-lg {{ $i == $hoje ? 'bg-[#D4AF37] text-black font-black shadow-[0_0_15_rgba(212,175,55,0.5)]' : 'text-zinc-500' }}">
                             {{ $i }}
                         </span>
                     @endfor
