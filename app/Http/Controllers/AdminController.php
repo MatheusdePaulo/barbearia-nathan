@@ -73,8 +73,14 @@ class AdminController extends Controller
 
     public function birthdays()
     {
-        $hoje = now()->format('m-d');
-        $aniversariantes = User::whereRaw("strftime('%m-%d', birthday) = ?", [$hoje])->get();
+        $hoje = now();
+
+        // Usando whereMonth e whereDay o Laravel cuida da tradução para o banco (SQLite ou MySQL)
+        $aniversariantes = User::where('is_admin', false)
+            ->whereMonth('birthday', $hoje->month)
+            ->whereDay('birthday', $hoje->day)
+            ->get();
+
         $aniversariantesHoje = $aniversariantes->count();
 
         return view('admin.birthdays', compact('aniversariantes', 'aniversariantesHoje'));
