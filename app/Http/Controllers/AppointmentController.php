@@ -7,14 +7,13 @@ use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
-use MercadoPago\Client\Preference\PreferenceClient;
 use MercadoPago\Client\Payment\PaymentClient;
 use MercadoPago\MercadoPagoConfig;
 
 class AppointmentController extends Controller
 {
     /**
-     * EXIBE A TELA DE AGENDAMENTO (Lógica de horários mantida 100%)
+     * EXIBE A TELA DE AGENDAMENTO (Lógica de horários mantida e blindada)
      */
     public function create(Request $request, $service_slug = 'geral')
     {
@@ -26,15 +25,26 @@ class AppointmentController extends Controller
         $isToday = $carbonDate->isToday();
         $now = Carbon::now();
 
-        // Regra de Domingo e Segunda (Barbearia Fechada)
+        // Regra de Barbearia Fechada (Dom/Seg)
         $dayOfWeek = $carbonDate->dayOfWeek;
         $isClosed = ($dayOfWeek === 0 || $dayOfWeek === 1);
 
-        // Busca horários ocupados
-        $bookedSlots = Appointment::whereDate('date', $date)
+        // BUSCA HORÁRIOS OCUPADOS
+        // AQUI O SEGREDO: Só bloqueia se o status for 'confirmed' ou 'pending'
+        // Se marcou 'canceled' (Faltou), o horário não entra nesse array e fica LIVRE.
+        $appointments = Appointment::whereDate('date', $date)
             ->whereIn('status', ['confirmed', 'pending'])
-            ->pluck('time')
-            ->toArray();
+            ->with('service')
+            ->get();
+
+        $bookedSlots = [];
+        foreach ($appointments as $app) {
+            $bookedSlots[] = $app->time;
+            // Lógica de 1h para combos
+            if ($app->service && (strpos($app->service->name, 'Combo') !== false || strpos($app->service->name, 'Progressiva') !== false)) {
+                $bookedSlots[] = Carbon::parse($app->time)->addMinutes(30)->format('H:i');
+            }
+        }
 
         $allSlots = [
             '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
@@ -46,15 +56,18 @@ class AppointmentController extends Controller
             $isBooked = in_array($time, $bookedSlots);
             $isPast = false;
 
+            // TRAVA ANTI-RETROCESSO (Não permite agendar no passado)
+            // Se a data for hoje, comparamos o horário do slot com o horário de agora
             if ($isToday) {
                 $slotTime = Carbon::parse($date . ' ' . $time);
-                if ($slotTime->lessThan($now)) {
+                if ($slotTime->copy()->addMinutes(1)->lessThan($now)) { // Margem de 1min
                     $isPast = true;
                 }
             }
 
             $slots[] = [
                 'time' => $time,
+                // Disponível apenas se: Aberto E Não Ocupado E Não é Passado
                 'available' => !$isClosed && !$isBooked && !$isPast
             ];
         }
@@ -69,22 +82,27 @@ class AppointmentController extends Controller
     }
 
     /**
-     * MÉTODO PARA O CLIENTE AGENDAR - INTEGRAÇÃO PIX REAL
+     * MÉTODO PARA O CLIENTE AGENDAR - COM TRAVA DE SEGURANÇA
      */
     public function store(Request $request)
     {
+        // 1. TRAVA DE SEGURANÇA: Verifica se o horário ainda está disponível no banco
+        $exists = Appointment::whereDate('date', $request->date)
+            ->where('time', $request->time)
+            ->whereIn('status', ['confirmed', 'pending'])
+            ->exists();
+
+        if ($exists) {
+            return redirect()->back()->with('error', 'Ops! Alguém acabou de reservar esse horário. Escolha outro.');
+        }
+
         try {
             $service = Service::findOrFail($request->service_id);
             $amount = ($request->payment_type == 'signal') ? 5.00 : (float) $service->price;
 
-            // Configuração do Mercado Pago via .env
             MercadoPagoConfig::setAccessToken(env('MERCADO_PAGO_TOKEN'));
             $client = new PaymentClient();
 
-            // Pegando o CPF real do usuário e limpando caracteres especiais
-            $userCpf = preg_replace('/[^0-9]/', '', auth()->user()->cpf);
-
-            // Criando o pagamento PIX
             $payment = $client->create([
                 "transaction_amount" => $amount,
                 "description" => "Reserva Barber Nathan: " . $service->name,
@@ -92,16 +110,13 @@ class AppointmentController extends Controller
                 "payer" => [
                     "email" => auth()->user()->email,
                     "first_name" => explode(' ', auth()->user()->name)[0],
-                    // Remova o bloco "identification", o Mercado Pago aceita gerar Pix apenas com e-mail para valores baixos
                 ]
             ]);
 
-            // Verificação de erro na resposta da API
             if (!$payment->id) {
-                dd("Erro na API do Mercado Pago:", $payment->error);
+                return redirect()->back()->with('error', 'Erro ao gerar pagamento. Tente novamente.');
             }
 
-            // Criando o registro no banco com os dados do PIX para a Success Blade
             $appointment = Appointment::create([
                 'user_id' => auth()->id(),
                 'service_id' => $service->id,
@@ -116,31 +131,12 @@ class AppointmentController extends Controller
             return view('appointments.success', compact('appointment'));
 
         } catch (\Exception $e) {
-            // Verifica se o erro possui uma resposta detalhada da API
-            if (method_exists($e, 'getApiResponse')) {
-                $response = $e->getApiResponse();
-                dd([
-                    'Mensagem' => 'Erro na API Mercado Pago',
-                    'Causa' => $response->getContent() // Isso vai mostrar o JSON real do erro
-                ]);
-            }
-
-            // Se for um erro comum do PHP/Laravel
-            dd("Erro Geral no Agendamento:", $e->getMessage());
+            return redirect()->back()->with('error', 'Erro técnico: ' . $e->getMessage());
         }
     }
 
     /**
-     * MANTIDO: Listagem Admin
-     */
-    public function index()
-    {
-        $appointments = Appointment::with('service')->get();
-        return view('admin.appointments.index', compact('appointments'));
-    }
-
-    /**
-     * MANTIDO: Agendamento manual pelo barbeiro (Walk-in)
+     * AGENDAMENTO MANUAL (WALK-IN) - COM TRAVA DE SEGURANÇA
      */
     public function storeAvulso(Request $request)
     {
@@ -150,6 +146,16 @@ class AppointmentController extends Controller
             'date'        => 'required|date',
             'time'        => 'required',
         ]);
+
+        // TRAVA DE SEGURANÇA NO ADMIN TAMBÉM
+        $exists = Appointment::whereDate('date', $validated['date'])
+            ->where('time', $validated['time'])
+            ->whereIn('status', ['confirmed', 'pending'])
+            ->exists();
+
+        if ($exists) {
+            return redirect()->back()->with('error', 'Horário já ocupado no banco de dados!');
+        }
 
         try {
             Appointment::create([
@@ -161,15 +167,12 @@ class AppointmentController extends Controller
                 'status'      => 'confirmed',
             ]);
 
-            return redirect()->back()->with('success', 'Agendamento registrado!');
+            return redirect()->back()->with('success', 'Agendamento registrado com sucesso!');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Erro ao salvar: ' . $e->getMessage());
         }
     }
 
-    /**
-     * MANTIDO: Atualização de Status (Admin)
-     */
     public function updateStatus(Request $request, $id)
     {
         $appointment = Appointment::findOrFail($id);
@@ -177,9 +180,6 @@ class AppointmentController extends Controller
         return redirect()->back()->with('success', 'Status atualizado!');
     }
 
-    /**
-     * MANTIDO: Exclusão de Agendamento
-     */
     public function destroy($id)
     {
         $appointment = Appointment::findOrFail($id);

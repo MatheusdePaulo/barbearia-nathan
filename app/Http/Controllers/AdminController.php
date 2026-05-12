@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Appointment;
+use App\Models\Service; // Adicionado para o Mix de Atendimentos
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -35,8 +37,8 @@ class AdminController extends Controller
             $visitorsData[] = Appointment::whereDate('date', $diaData->format('Y-m-d'))->count();
         }
 
-        $receitaServicos = Appointment::whereIn('status', ['confirmed', 'finished']) // Adicionado confirmed para testes
-        ->join('services', 'appointments.service_id', '=', 'services.id')
+        $receitaServicos = Appointment::whereIn('status', ['confirmed', 'finished'])
+            ->join('services', 'appointments.service_id', '=', 'services.id')
             ->sum('services.price');
 
         $receitaProdutos = 0;
@@ -82,34 +84,60 @@ class AdminController extends Controller
     {
         $filter = $request->query('filter', 'mes');
 
-        $query = Appointment::where('status', 'finished');
-        if($filter == 'hoje') $query->whereDate('date', now());
-        if($filter == '7dias') $query->where('date', '>=', now()->subDays(7));
-        if($filter == 'mes_passado') $query->whereMonth('date', now()->subMonth()->month);
-        if($filter == 'ano') $query->whereYear('date', now()->year);
+        // Base da Query para Filtros Dinâmicos
+        $queryBase = Appointment::whereIn('status', ['confirmed', 'finished']);
 
-        $faturamentoServicos = $query->join('services', 'appointments.service_id', '=', 'services.id')->sum('services.price');
-        $faturamentoProdutos = 450.00;
-        $totalDespesas = 150.00;
+        if($filter == 'hoje') $queryBase->whereDate('date', now());
+        if($filter == '7dias') $queryBase->where('date', '>=', now()->subDays(7));
+        if($filter == 'mes_passado') $queryBase->whereMonth('date', now()->subMonth()->month);
+        if($filter == 'ano') $queryBase->whereYear('date', now()->year);
+        if($filter == 'mes') $queryBase->whereMonth('date', now()->month);
+
+        // Cálculos Reais
+        $faturamentoServicos = (clone $queryBase)
+            ->join('services', 'appointments.service_id', '=', 'services.id')
+            ->sum('services.price');
+
+        $faturamentoProdutos = 0.00; // Será preenchido quando fizermos o CRUD de produtos
+        $totalDespesas = 0.00; // Será preenchido com a lógica de Saídas
 
         $faturamentoTotal = $faturamentoServicos + $faturamentoProdutos;
         $saldoReal = $faturamentoTotal - $totalDespesas;
 
-        $servicosRealizados = Appointment::where('status', 'finished')->count();
+        $servicosRealizados = (clone $queryBase)->count();
         $ticketMedio = $servicosRealizados > 0 ? ($faturamentoTotal / $servicosRealizados) : 0;
 
         $totalAgendamentos = Appointment::count();
         $totalFaltas = Appointment::where('status', 'canceled')->count();
         $taxaNoShow = $totalAgendamentos > 0 ? round(($totalFaltas / $totalAgendamentos) * 100) : 0;
 
-        $labelsMensal = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai'];
-        $dadosFaturamento = [12000, 15000, 13500, 16000, $faturamentoTotal];
+        // GRÁFICO 1: Evolução Mensal Real (Últimos 5 meses)
+        $labelsMensal = [];
+        $dadosFaturamento = [];
+        for ($i = 4; $i >= 0; $i--) {
+            $mes = now()->subMonths($i);
+            $labelsMensal[] = $mes->translatedFormat('M');
+            $dadosFaturamento[] = Appointment::whereIn('status', ['confirmed', 'finished'])
+                ->whereMonth('date', $mes->month)
+                ->whereYear('date', $mes->year)
+                ->join('services', 'appointments.service_id', '=', 'services.id')
+                ->sum('services.price');
+        }
+
+        // GRÁFICO 2: Mix de Atendimentos Real
+        $topServicos = Appointment::select('services.name', DB::raw('count(*) as total'))
+            ->join('services', 'appointments.service_id', '=', 'services.id')
+            ->groupBy('services.name')
+            ->orderBy('total', 'desc')
+            ->take(4)
+            ->get();
 
         $servicosPopulares = [
-            'labels' => ['Corte', 'Barba', 'Combo', 'Sobrancelha'],
-            'data' => [45, 25, 20, 10]
+            'labels' => $topServicos->pluck('name')->toArray() ?: ['Nenhum'],
+            'data' => $topServicos->pluck('total')->toArray() ?: [0]
         ];
 
+        // GRÁFICO 3: Comparativo Real
         $comparativoVendas = [
             'labels' => ['Serviços', 'Produtos'],
             'data' => [$faturamentoServicos, $faturamentoProdutos]
@@ -122,24 +150,18 @@ class AdminController extends Controller
         ));
     }
 
-    /**
-     * MÉTODOS ADICIONADOS PARA RESOLVER O ERRO DE CONFIGURAÇÕES
-     */
     public function settings()
     {
-        // Dados fictícios para a View não quebrar enquanto não usamos o Eloquent
         $barbearia = [
             'nome' => 'Barber Nathan',
-            'whatsapp' => '(81) 98765-4321',
-            'email' => 'matheus@barbernathan.com'
+            'whatsapp' => '(85) 90000-0000',
+            'email' => 'admin@barbernathan.com'
         ];
-
         return view('admin.settings', compact('barbearia'));
     }
 
     public function updateSettings(Request $request)
     {
-        // Lógica de salvamento será implementada na fase do Eloquent
         return redirect()->back()->with('success', 'Configurações atualizadas com sucesso!');
     }
 }
