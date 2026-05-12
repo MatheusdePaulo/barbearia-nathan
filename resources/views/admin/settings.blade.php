@@ -17,25 +17,26 @@
                     <div class="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]"></div>
 
                     <div class="relative inline-block mb-6">
-                        <img src="https://ui-avatars.com/api/?name=Matheus+de+Paulo&background=D4AF37&color=000&bold=true"
+                        {{-- Avatar dinâmico puxando o nome do Admin logado --}}
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=D4AF37&color=000&bold=true"
                              class="w-24 h-24 rounded-3xl border-2 border-zinc-800 shadow-2xl mx-auto">
                         <button class="absolute -bottom-2 -right-2 bg-zinc-900 text-[#D4AF37] p-2 rounded-xl border border-zinc-800 hover:bg-[#D4AF37] hover:text-black transition-all">
                             <i class="fas fa-camera text-xs"></i>
                         </button>
                     </div>
 
-                    <h3 class="text-white font-black italic uppercase text-lg leading-none">Matheus de Paulo</h3>
+                    <h3 class="text-white font-black italic uppercase text-lg leading-none">{{ auth()->user()->name }}</h3>
                     <p class="text-[#D4AF37] text-[10px] font-bold uppercase tracking-[0.2em] mt-2">Administrador Master</p>
 
                     <div class="mt-8 pt-8 border-t border-zinc-800/50 space-y-4">
                         <div class="text-left">
                             <label class="text-[9px] font-black uppercase text-zinc-600 block mb-1">E-mail de Acesso</label>
-                            <p class="text-zinc-400 text-xs font-mono">matheus@barbernathan.com</p>
+                            <p class="text-zinc-400 text-xs font-mono">{{ auth()->user()->email }}</p>
                         </div>
                     </div>
                 </div>
 
-                {{-- BOTÃO SAIR (Versão Mobile/Tablet em destaque) --}}
+                {{-- BOTÃO SAIR --}}
                 <div class="lg:hidden">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
@@ -55,15 +56,18 @@
                         <i class="fas fa-store text-[#D4AF37]"></i> Dados da Unidade
                     </h4>
 
+                    {{-- Definido os names unit_name e unit_whatsapp para o Controller --}}
                     <form action="{{ route('admin.settings.update') }}" method="POST" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         @csrf
                         <div class="space-y-2">
                             <label class="text-[9px] font-black uppercase text-zinc-500 ml-2">Nome da Barbearia</label>
-                            <input type="text" value="Barber Nathan" class="w-full bg-zinc-900 border-zinc-800 rounded-2xl p-4 text-sm text-white focus:border-[#D4AF37] outline-none transition-all">
+                            <input type="text" name="unit_name" value="{{ $barbearia['nome'] }}"
+                                   class="w-full bg-zinc-900 border-zinc-800 rounded-2xl p-4 text-sm text-white focus:border-[#D4AF37] outline-none transition-all">
                         </div>
                         <div class="space-y-2">
                             <label class="text-[9px] font-black uppercase text-zinc-500 ml-2">WhatsApp de Contato</label>
-                            <input type="text" value="(81) 98765-4321" class="w-full bg-zinc-900 border-zinc-800 rounded-2xl p-4 text-sm text-white focus:border-[#D4AF37] outline-none transition-all">
+                            <input type="text" name="unit_whatsapp" value="{{ $barbearia['whatsapp'] }}"
+                                   class="w-full bg-zinc-900 border-zinc-800 rounded-2xl p-4 text-sm text-white focus:border-[#D4AF37] outline-none transition-all">
                         </div>
                         <div class="sm:col-span-2 flex justify-end">
                             <button type="submit" class="w-full sm:w-auto bg-[#D4AF37] text-black px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-lg active:scale-95 transition-all">Salvar Unidade</button>
@@ -77,16 +81,19 @@
                         <i class="fas fa-shield-alt text-[#D4AF37]"></i> Segurança e Senha
                     </h4>
 
-                    <form action="#" method="POST" class="space-y-6">
+                    <form action="{{ route('admin.settings.update') }}" method="POST" class="space-y-6">
                         @csrf
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <div class="space-y-2">
                                 <label class="text-[9px] font-black uppercase text-zinc-500 ml-2">Nova Senha</label>
-                                <input type="password" placeholder="••••••••" class="w-full bg-zinc-900 border-zinc-800 rounded-2xl p-4 text-sm text-white focus:border-[#D4AF37] outline-none">
+                                <input type="password" name="password" placeholder="••••••••"
+                                       class="w-full bg-zinc-900 border-zinc-800 rounded-2xl p-4 text-sm text-white focus:border-[#D4AF37] outline-none @error('password') border-red-500 @enderror">
+                                @error('password') <span class="text-[8px] text-red-500 uppercase font-black ml-2">{{ $message }}</span> @enderror
                             </div>
                             <div class="space-y-2">
                                 <label class="text-[9px] font-black uppercase text-zinc-500 ml-2">Confirmar Senha</label>
-                                <input type="password" placeholder="••••••••" class="w-full bg-zinc-900 border-zinc-800 rounded-2xl p-4 text-sm text-white focus:border-[#D4AF37] outline-none">
+                                <input type="password" name="password_confirmation" placeholder="••••••••"
+                                       class="w-full bg-zinc-900 border-zinc-800 rounded-2xl p-4 text-sm text-white focus:border-[#D4AF37] outline-none">
                             </div>
                         </div>
                         <div class="flex justify-end">

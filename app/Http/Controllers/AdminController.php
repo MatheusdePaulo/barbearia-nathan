@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Setting;
 use App\Models\User;
 use App\Models\Appointment;
-use App\Models\Service; // Adicionado para o Mix de Atendimentos
+use App\Models\Service;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash; // Ponto e vírgula corrigido aqui
 
 class AdminController extends Controller
 {
@@ -74,23 +76,18 @@ class AdminController extends Controller
     public function birthdays()
     {
         $hoje = now();
-
-        // Usando whereMonth e whereDay o Laravel cuida da tradução para o banco (SQLite ou MySQL)
         $aniversariantes = User::where('is_admin', false)
             ->whereMonth('birthday', $hoje->month)
             ->whereDay('birthday', $hoje->day)
             ->get();
 
         $aniversariantesHoje = $aniversariantes->count();
-
         return view('admin.birthdays', compact('aniversariantes', 'aniversariantesHoje'));
     }
 
     public function reports(Request $request)
     {
         $filter = $request->query('filter', 'mes');
-
-        // Base da Query para Filtros Dinâmicos
         $queryBase = Appointment::whereIn('status', ['confirmed', 'finished']);
 
         if($filter == 'hoje') $queryBase->whereDate('date', now());
@@ -99,14 +96,12 @@ class AdminController extends Controller
         if($filter == 'ano') $queryBase->whereYear('date', now()->year);
         if($filter == 'mes') $queryBase->whereMonth('date', now()->month);
 
-        // Cálculos Reais
         $faturamentoServicos = (clone $queryBase)
             ->join('services', 'appointments.service_id', '=', 'services.id')
             ->sum('services.price');
 
-        $faturamentoProdutos = 0.00; // Será preenchido quando fizermos o CRUD de produtos
-        $totalDespesas = 0.00; // Será preenchido com a lógica de Saídas
-
+        $faturamentoProdutos = 0.00;
+        $totalDespesas = 0.00;
         $faturamentoTotal = $faturamentoServicos + $faturamentoProdutos;
         $saldoReal = $faturamentoTotal - $totalDespesas;
 
@@ -117,7 +112,6 @@ class AdminController extends Controller
         $totalFaltas = Appointment::where('status', 'canceled')->count();
         $taxaNoShow = $totalAgendamentos > 0 ? round(($totalFaltas / $totalAgendamentos) * 100) : 0;
 
-        // GRÁFICO 1: Evolução Mensal Real (Últimos 5 meses)
         $labelsMensal = [];
         $dadosFaturamento = [];
         for ($i = 4; $i >= 0; $i--) {
@@ -130,7 +124,6 @@ class AdminController extends Controller
                 ->sum('services.price');
         }
 
-        // GRÁFICO 2: Mix de Atendimentos Real
         $topServicos = Appointment::select('services.name', DB::raw('count(*) as total'))
             ->join('services', 'appointments.service_id', '=', 'services.id')
             ->groupBy('services.name')
@@ -143,7 +136,6 @@ class AdminController extends Controller
             'data' => $topServicos->pluck('total')->toArray() ?: [0]
         ];
 
-        // GRÁFICO 3: Comparativo Real
         $comparativoVendas = [
             'labels' => ['Serviços', 'Produtos'],
             'data' => [$faturamentoServicos, $faturamentoProdutos]
@@ -158,16 +150,38 @@ class AdminController extends Controller
 
     public function settings()
     {
+        $settings = Setting::pluck('value', 'key');
+
         $barbearia = [
-            'nome' => 'Barber Nathan',
-            'whatsapp' => '(85) 90000-0000',
-            'email' => 'admin@barbernathan.com'
+            'nome' => $settings['unit_name'] ?? 'Barber Nathan',
+            'whatsapp' => $settings['unit_whatsapp'] ?? '(85) 90000-0000',
+            'email' => auth()->user()->email
         ];
+
         return view('admin.settings', compact('barbearia'));
     }
 
     public function updateSettings(Request $request)
     {
-        return redirect()->back()->with('success', 'Configurações atualizadas com sucesso!');
+        if ($request->has('unit_name')) {
+            Setting::updateOrCreate(['key' => 'unit_name'], ['value' => $request->unit_name]);
+            Setting::updateOrCreate(['key' => 'unit_whatsapp'], ['value' => $request->unit_whatsapp]);
+
+            return redirect()->back()->with('success', 'Configurações da unidade salvas!');
+        }
+
+        if ($request->has('password') && $request->filled('password')) {
+            $request->validate([
+                'password' => 'required|min:8|confirmed',
+            ]);
+
+            auth()->user()->update([
+                'password' => Hash::make($request->password)
+            ]);
+
+            return redirect()->back()->with('success', 'Senha atualizada com sucesso!');
+        }
+
+        return redirect()->back();
     }
 }
