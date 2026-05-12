@@ -98,14 +98,22 @@ class AppointmentController extends Controller
 
         try {
             $service = Service::findOrFail($request->service_id);
-            $amount = ($request->payment_type == 'signal') ? 5.00 : (float) $service->price;
+
+            // LÓGICA DE PREÇO PROMOCIONAL:
+            // Se for pagamento de sinal, o valor é fixo em R$ 5,00.
+            // Se for pagamento total, verifica se o serviço está marcado como 'is_promo'.
+            if ($request->payment_type == 'signal') {
+                $amount = 5.00;
+            } else {
+                $amount = (float) ($service->is_promo ? $service->promo_price : $service->price);
+            }
 
             MercadoPagoConfig::setAccessToken(env('MERCADO_PAGO_TOKEN'));
             $client = new PaymentClient();
 
             $payment = $client->create([
                 "transaction_amount" => $amount,
-                "description" => "Reserva Barber Nathan: " . $service->name,
+                "description" => "Reserva Barber Nathan: " . $service->name . ($service->is_promo ? " (Promo Online)" : ""),
                 "payment_method_id" => "pix",
                 "payer" => [
                     "email" => auth()->user()->email,
@@ -114,7 +122,7 @@ class AppointmentController extends Controller
             ]);
 
             if (!$payment->id) {
-                return redirect()->back()->with('error', 'Erro ao gerar pagamento. Tente novamente.');
+                return redirect()->back()->with('error', 'Erro ao gerar pagamento no Mercado Pago. Tente novamente.');
             }
 
             $appointment = Appointment::create([
@@ -131,7 +139,7 @@ class AppointmentController extends Controller
             return view('appointments.success', compact('appointment'));
 
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Erro técnico: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Erro técnico no agendamento: ' . $e->getMessage());
         }
     }
 

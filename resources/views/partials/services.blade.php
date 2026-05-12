@@ -13,29 +13,42 @@
         </div>
 
         <div class="bg-white shadow-xl rounded-sm p-8 md:p-12 lg:p-24 max-w-[1000px] mx-auto mb-16">
-            {{-- Ajustamos o gap-x para ser menor no tablet (md) e maior no desktop (lg) para evitar sobreposição --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 lg:gap-x-20 gap-y-10 md:gap-y-16 lg:gap-y-24">
 
-                {{-- Loop dinâmico que percorre os 10 serviços do banco --}}
                 @foreach($services as $service)
-                    <div class="flex items-start gap-4 md:gap-5 lg:gap-6 group">
-                        {{-- Imagem encolhe levemente no tablet para dar espaço ao texto --}}
+                    <div class="flex items-start gap-4 md:gap-5 lg:gap-6 group relative">
+
+                        {{-- Marcador de Promoção --}}
+                        @if($service->is_promo)
+                            <div class="absolute -top-3 -left-3 bg-[#D4AF37] text-black text-[8px] font-black px-2 py-1 uppercase tracking-tighter shadow-lg z-10">
+                                Exclusivo Site
+                            </div>
+                        @endif
+
                         <img src="{{ asset('images/' . $service->image) }}"
-                             class="w-10 h-10 md:w-12 lg:w-14 md:h-12 lg:h-14 object-contain grayscale group-hover:grayscale-0 transition-all shrink-0"
+                             class="w-10 h-10 md:w-12 lg:w-14 md:h-12 lg:h-14 object-contain {{ $service->is_promo ? '' : 'grayscale' }} group-hover:grayscale-0 transition-all shrink-0"
                              alt="{{ $service->name }}">
 
                         <div class="text-left">
-                            {{-- Ajuste de fonte no tablet (md:text-lg) para não empurrar o layout --}}
                             <h4 class="font-barlow font-extrabold text-xl md:text-lg lg:text-2xl text-[#1A1C1E] uppercase leading-none mb-2 tracking-tight">
                                 {{ $service->name }}
                             </h4>
-                            {{-- Controle de largura máxima do texto no tablet para manter o alinhamento vertical --}}
                             <p class="font-work-sans text-xs lg:text-sm text-[#1A1C1E]/60 mb-3 max-w-[200px] md:max-w-[180px] lg:max-w-[220px] leading-snug">
                                 {{ $service->description }}
                             </p>
-                            <span class="font-barlow font-extrabold text-xl lg:text-2xl text-[#1A1C1E]">
-                                R$ {{ number_format($service->price, 0, ',', '.') }}
-                            </span>
+
+                            <div class="flex flex-col">
+                                @if($service->is_promo)
+                                    <span class="text-[10px] text-zinc-400 line-through font-bold">R$ {{ number_format($service->price, 0, ',', '.') }}</span>
+                                    <span class="font-barlow font-extrabold text-xl lg:text-2xl text-[#1A1C1E]">
+                                        R$ {{ number_format($service->promo_price, 0, ',', '.') }}
+                                    </span>
+                                @else
+                                    <span class="font-barlow font-extrabold text-xl lg:text-2xl text-[#1A1C1E]">
+                                        R$ {{ number_format($service->price, 0, ',', '.') }}
+                                    </span>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 @endforeach
