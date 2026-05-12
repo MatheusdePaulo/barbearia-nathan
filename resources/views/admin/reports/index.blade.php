@@ -1,9 +1,9 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="p-4 sm:p-8 space-y-8 bg-[#050505] min-h-screen" x-data="{ openTrans: false, type: 'entrada' }">
+    <div class="p-4 sm:p-8 space-y-8 bg-[#050505] min-h-screen" x-data="{ openTrans: false, type: 'entrada', category: 'service' }">
 
-        {{-- HEADER COM FILTROS EXPANDIDOS --}}
+        {{-- HEADER COM FILTROS --}}
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div class="text-center lg:text-left">
                 <h1 class="text-xl sm:text-2xl font-black italic text-white uppercase tracking-tighter">Inteligência de Negócio</h1>
@@ -15,7 +15,7 @@
                     <i class="fas fa-plus-circle"></i> Nova Transação
                 </button>
 
-                {{-- FILTROS TEMPORAIS ADICIONAIS --}}
+                {{-- FILTROS TEMPORAIS --}}
                 <div class="flex gap-1 bg-zinc-900/50 p-1 rounded-xl border border-zinc-800 overflow-x-auto no-scrollbar max-w-full">
                     @foreach(['hoje' => 'Hoje', '7dias' => '7 Dias', 'mes' => 'Este Mês', 'mes_passado' => 'Mês Passado', 'ano' => 'Este Ano'] as $key => $label)
                         <a href="?filter={{ $key }}"
@@ -27,7 +27,7 @@
             </div>
         </div>
 
-        {{-- GRID KPIs (Mantido Alinhado) --}}
+        {{-- GRID KPIs --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
             <div class="bg-[#121212] p-6 rounded-3xl border border-zinc-800 border-l-4 border-l-green-600 shadow-xl">
                 <p class="text-zinc-500 text-[9px] font-black uppercase italic mb-2 tracking-widest">Entradas Totais</p>
@@ -54,15 +54,13 @@
             </div>
         </div>
 
-        {{-- SESSÃO DE 3 GRÁFICOS (ALINHAMENTO TOTAL) --}}
+        {{-- SESSÃO DE GRÁFICOS --}}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {{-- 1. Crescimento (Linha) --}}
             <div class="bg-[#121212] p-6 rounded-[2.5rem] border border-zinc-800 shadow-2xl flex flex-col h-[450px]">
                 <h4 class="text-white font-black italic uppercase text-[10px] tracking-widest mb-6 border-b border-zinc-800 pb-4">Evolução de Faturamento</h4>
                 <div class="flex-1 min-h-0"><canvas id="revenueChart"></canvas></div>
             </div>
 
-            {{-- 2. Mix de Serviços (Doughnut) --}}
             <div class="bg-[#121212] p-6 rounded-[2.5rem] border border-zinc-800 shadow-2xl flex flex-col h-[450px]">
                 <h4 class="text-white font-black italic uppercase text-[10px] tracking-widest mb-6 border-b border-zinc-800 pb-4 text-center">Mix de Atendimentos</h4>
                 <div class="flex-1 flex items-center justify-center min-h-0"><canvas id="mixChart"></canvas></div>
@@ -71,7 +69,6 @@
                 </div>
             </div>
 
-            {{-- 3. NOVO: Origem da Receita (Barra Vertical) --}}
             <div class="bg-[#121212] p-6 rounded-[2.5rem] border border-zinc-800 shadow-2xl flex flex-col h-[450px]">
                 <h4 class="text-white font-black italic uppercase text-[10px] tracking-widest mb-6 border-b border-zinc-800 pb-4 text-right">Origem da Receita</h4>
                 <div class="flex-1 min-h-0"><canvas id="originChart"></canvas></div>
@@ -79,7 +76,7 @@
             </div>
         </div>
 
-        {{-- BOTÕES DE EXPORTAÇÃO FUNCIONAIS --}}
+        {{-- EXPORTAÇÃO --}}
         <div class="flex flex-col sm:flex-row gap-4 pb-10">
             <button onclick="window.print()" class="flex-1 bg-zinc-900 border border-zinc-800 text-white py-5 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-zinc-800 transition-all flex items-center justify-center gap-3">
                 <i class="fas fa-file-pdf text-red-500"></i> Exportar PDF do Relatório
@@ -89,20 +86,47 @@
             </button>
         </div>
 
-        {{-- MODAL DE TRANSAÇÃO (Mantido igual) --}}
+        {{-- MODAL DE TRANSAÇÃO --}}
         <div x-show="openTrans" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm" x-transition.opacity x-cloak>
             <div class="bg-[#121212] border border-zinc-800 p-8 rounded-[2.5rem] w-full max-w-md shadow-2xl relative" @click.away="openTrans = false">
+
                 <h2 class="text-white font-black italic uppercase tracking-tighter text-xl mb-6">Novo Lançamento</h2>
-                <form class="space-y-4">
+
+                <form action="{{ route('admin.transactions.store') }}" method="POST" class="space-y-4">
+                    @csrf
+                    <input type="hidden" name="type" :value="type">
+
                     <div class="flex gap-2 mb-4 bg-zinc-900 p-1 rounded-xl">
                         <button type="button" @click="type = 'entrada'" :class="type === 'entrada' ? 'bg-green-600 text-white shadow-lg' : 'text-zinc-500'" class="flex-1 py-2 rounded-lg text-[9px] font-black uppercase transition-all">Entrada</button>
                         <button type="button" @click="type = 'saida'" :class="type === 'saida' ? 'bg-red-600 text-white shadow-lg' : 'text-zinc-500'" class="flex-1 py-2 rounded-lg text-[9px] font-black uppercase transition-all">Saída</button>
                     </div>
-                    <input type="text" placeholder="DESCRIÇÃO" class="w-full bg-zinc-900 border-zinc-800 rounded-2xl p-4 text-white text-xs focus:border-[#D4AF37] outline-none">
-                    <input type="number" placeholder="VALOR R$" class="w-full bg-zinc-900 border-zinc-800 rounded-2xl p-4 text-white text-xs focus:border-[#D4AF37] outline-none font-mono">
+
+                    {{-- SELETOR DE CATEGORIA (Apenas para Entrada) --}}
+                    <template x-if="type === 'entrada'">
+                        <div class="space-y-1">
+                            <label class="text-[8px] font-bold text-zinc-500 uppercase ml-2 tracking-widest">Categoria da Receita</label>
+                            <select name="category" class="w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-4 text-white text-[10px] font-bold uppercase focus:border-[#D4AF37] outline-none appearance-none cursor-pointer">
+                                <option value="service">Corte de Cabelo / Barba</option>
+                                <option value="product">Venda de Produto</option>
+                            </select>
+                        </div>
+                    </template>
+
+                    <div class="space-y-1">
+                        <label class="text-[8px] font-bold text-zinc-500 uppercase ml-2 tracking-widest">Descrição</label>
+                        <input type="text" name="description" required placeholder="Ex: Conta de Luz, Venda Manual..." class="w-full bg-zinc-900 border-zinc-800 rounded-2xl p-4 text-white text-xs focus:border-[#D4AF37] outline-none">
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="text-[8px] font-bold text-zinc-500 uppercase ml-2 tracking-widest">Valor (R$)</label>
+                        <input type="number" name="amount" step="0.01" required placeholder="0,00" class="w-full bg-zinc-900 border-zinc-800 rounded-2xl p-4 text-white text-xs focus:border-[#D4AF37] outline-none font-mono">
+                    </div>
+
                     <div class="pt-4 flex gap-3">
                         <button type="button" @click="openTrans = false" class="flex-1 bg-zinc-800 text-white py-4 rounded-2xl font-black text-[10px] uppercase">Sair</button>
-                        <button type="submit" :class="type === 'entrada' ? 'bg-green-600' : 'bg-red-600'" class="flex-[2] text-white py-4 rounded-2xl font-black text-[10px] uppercase shadow-lg">Confirmar</button>
+                        <button type="submit" :class="type === 'entrada' ? 'bg-green-600' : 'bg-red-600'" class="flex-[2] text-white py-4 rounded-2xl font-black text-[10px] uppercase shadow-lg">
+                            Confirmar <span x-text="type"></span>
+                        </button>
                     </div>
                 </form>
             </div>
@@ -111,11 +135,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Configurações Globais do Chart.js
         Chart.defaults.color = '#52525b';
         Chart.defaults.font.family = 'Urbanist, sans-serif';
 
-        // 1. Receita
         new Chart(document.getElementById('revenueChart'), {
             type: 'line',
             data: {
@@ -125,7 +147,6 @@
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#1a1a1a' } }, x: { grid: { display: false } } } }
         });
 
-        // 2. Mix
         new Chart(document.getElementById('mixChart'), {
             type: 'doughnut',
             data: {
@@ -135,7 +156,6 @@
             options: { responsive: true, maintainAspectRatio: false, cutout: '80%', plugins: { legend: { display: false } } }
         });
 
-        // 3. NOVO: Origem (Barra)
         new Chart(document.getElementById('originChart'), {
             type: 'bar',
             data: {

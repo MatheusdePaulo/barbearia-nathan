@@ -76,10 +76,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Gestão de Produtos (CRUD Completo)
         Route::resource('products', ProductController::class);
+        Route::post('/products/{id}/sell', [ProductController::class, 'sell'])->name('products.sell');
 
         // Agenda e Relatórios (Métricas Financeiras Reais)
         Route::get('/agenda', [AdminController::class, 'agenda'])->name('agenda');
         Route::get('/relatorios', [AdminController::class, 'reports'])->name('reports');
+        Route::post('/relatorios/transacao', [AdminController::class, 'storeTransaction'])->name('transactions.store');
 
         // Configurações e Gestão da Unidade
         Route::get('/configuracoes', [AdminController::class, 'settings'])->name('settings');
