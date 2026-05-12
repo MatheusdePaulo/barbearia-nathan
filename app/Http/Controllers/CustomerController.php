@@ -12,25 +12,28 @@ class CustomerController extends Controller
     public function index(Request $request)
     {
         $filter = $request->query('filter');
+        $search = $request->query('search');
         $hoje = Carbon::today();
 
         $query = User::where('is_admin', false)
             ->leftJoin('appointments', function($join) use ($hoje) {
                 $join->on('users.id', '=', 'appointments.user_id')
                     ->where('appointments.date', '>=', $hoje)
-                    // Importante: filtrar apenas agendamentos que ainda não foram concluídos/cancelados
                     ->where('appointments.status', 'confirmed');
             })
             ->select(
                 'users.*',
                 'appointments.date as next_date',
                 'appointments.time as next_time',
-                'appointments.id as appointment_id' // AQUI ESTÁ O SEGREDO!
+                'appointments.id as appointment_id'
             )
             ->orderByRaw('appointments.date IS NULL, appointments.date ASC, appointments.time ASC')
             ->groupBy('users.id');
 
-        // ... restante dos filtros (hoje, amanha, semana) ...
+        if ($search) {
+            $query->where('users.name', 'like', "%{$search}%");
+        }
+
         if ($filter == 'hoje') {
             $query->whereDate('appointments.date', $hoje);
         } elseif ($filter == 'amanha') {
@@ -46,11 +49,37 @@ class CustomerController extends Controller
 
         return view('admin.customers.index', compact('customers', 'aniversariantesHoje', 'filter'));
     }
+
+    /**
+     * Lógica do Sorteio Barber Nathan
+     */
+    public function draw(Request $request)
+    {
+        $request->validate([
+            'type' => 'required|in:all,recent',
+            'quantity' => 'required|integer|min:1|max:10'
+        ]);
+
+        $query = User::where('is_admin', false);
+
+        if ($request->type == 'recent') {
+            $query->where('created_at', '>=', now()->subMonth());
+        }
+
+        // ... lógica anterior do sorteio
+        $winners = $query->inRandomOrder()->limit($request->quantity)->get();
+
+        if ($winners->isEmpty()) {
+            return redirect()->back()->with('error', 'Nenhum cliente elegível.');
+        }
+
+        // O toArray() garante que a estrutura seja previsível para a sessão
+        return redirect()->back()->with('winners', $winners->toArray());
+    }
+
     public function show($id)
     {
         $customer = User::with(['appointments.service'])->findOrFail($id);
-
-        // Contadores para o dashboard do cliente
         $totalCortes = $customer->appointments()->where('status', 'confirmed')->count();
         $naoCompareceu = $customer->appointments()->where('status', 'canceled')->count();
 

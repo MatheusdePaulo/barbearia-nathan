@@ -1,51 +1,64 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="flex flex-col min-h-screen lg:h-screen bg-[#050505]">
+    <div class="flex flex-col min-h-screen lg:h-screen bg-[#050505]" x-data="{ openDraw: false }">
 
         <div class="p-4 sm:p-8 flex-1 overflow-y-auto custom-scroll space-y-6 lg:space-y-8">
 
             <div class="flex flex-col gap-6">
-                {{-- Título e Contador --}}
+                {{-- Alerta de Vencedores --}}
+                @if(session('winners'))
+                    <div class="bg-[#D4AF37]/20 border border-[#D4AF37] p-6 rounded-[2.5rem] animate-bounce shadow-[0_0_50px_rgba(212,175,55,0.2)]">
+                        <h2 class="text-[#D4AF37] font-black italic uppercase text-center text-lg mb-2">🎉 Ganhadores do Sorteio!</h2>
+                        <div class="flex flex-wrap justify-center gap-4">
+                            @foreach(session('winners') as $winner)
+                                <span class="bg-black text-white px-4 py-2 rounded-full font-black uppercase text-[10px] border border-[#D4AF37]">
+                    {{-- Tentamos ler como objeto, se falhar, lemos como array --}}
+                                    {{ is_object($winner) ? $winner->name : $winner['name'] }}
+                </span>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Título e Botões de Ação --}}
                 <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                     <div>
                         <h1 class="text-xl sm:text-2xl font-black italic text-white uppercase tracking-tighter text-center lg:text-left">Gestão de Clientes</h1>
                         <p class="text-zinc-500 text-[10px] font-bold uppercase tracking-widest mt-1 text-center lg:text-left">Total de {{ $customers->count() }} clientes encontrados</p>
                     </div>
 
-                    {{-- Filtros Rápidos (7 dias, hoje, etc) --}}
-                    <div class="flex gap-2 bg-zinc-900/50 p-1 rounded-xl border border-zinc-800 overflow-x-auto no-scrollbar justify-center lg:justify-start">
-                        <a href="{{ route('admin.customers') }}" class="whitespace-nowrap px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-all {{ !$filter ? 'bg-[#D4AF37] text-black' : 'text-zinc-500 hover:text-white' }}">Todos</a>
-                        <a href="{{ route('admin.customers', ['filter' => 'hoje']) }}" class="whitespace-nowrap px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-all {{ $filter == 'hoje' ? 'bg-[#D4AF37] text-black' : 'text-zinc-500 hover:text-white' }}">Hoje</a>
-                        <a href="{{ route('admin.customers', ['filter' => 'amanha']) }}" class="whitespace-nowrap px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-all {{ $filter == 'amanha' ? 'bg-[#D4AF37] text-black' : 'text-zinc-500 hover:text-white' }}">Amanhã</a>
-                        <a href="{{ route('admin.customers', ['filter' => 'semana']) }}" class="whitespace-nowrap px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-all {{ $filter == 'semana' ? 'bg-[#D4AF37] text-black' : 'text-zinc-500 hover:text-white' }}">7 Dias</a>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <button @click="openDraw = true" class="bg-[#D4AF37] text-black px-6 py-3 rounded-xl text-[10px] font-black uppercase shadow-lg shadow-[#D4AF37]/10 flex items-center justify-center gap-2 hover:scale-105 transition-all">
+                            <i class="fas fa-trophy"></i> Realizar Sorteio
+                        </button>
+
+                        {{-- Filtros Rápidos --}}
+                        <div class="flex gap-2 bg-zinc-900/50 p-1 rounded-xl border border-zinc-800 overflow-x-auto no-scrollbar justify-center lg:justify-start">
+                            <a href="{{ route('admin.customers') }}" class="whitespace-nowrap px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-all {{ !$filter ? 'bg-zinc-800 text-white' : 'text-zinc-500 hover:text-white' }}">Todos</a>
+                            <a href="{{ route('admin.customers', ['filter' => 'hoje']) }}" class="whitespace-nowrap px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-all {{ $filter == 'hoje' ? 'bg-[#D4AF37] text-black' : 'text-zinc-500 hover:text-white' }}">Hoje</a>
+                            <a href="{{ route('admin.customers', ['filter' => 'amanha']) }}" class="whitespace-nowrap px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-all {{ $filter == 'amanha' ? 'bg-[#D4AF37] text-black' : 'text-zinc-500 hover:text-white' }}">Amanhã</a>
+                            <a href="{{ route('admin.customers', ['filter' => 'semana']) }}" class="whitespace-nowrap px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-all {{ $filter == 'semana' ? 'bg-[#D4AF37] text-black' : 'text-zinc-500 hover:text-white' }}">7 Dias</a>
+                        </div>
                     </div>
                 </div>
 
-                {{-- CAMPO DE PESQUISA POR NOME --}}
+                {{-- CAMPO DE PESQUISA --}}
                 <div class="max-w-xl mx-auto lg:mx-0 w-full">
                     <form action="{{ route('admin.customers') }}" method="GET" class="relative group">
-                        {{-- Mantém o filtro de data ativo na busca se houver --}}
                         @if($filter) <input type="hidden" name="filter" value="{{ $filter }}"> @endif
-
                         <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none transition-all group-focus-within:text-[#D4AF37]">
                             <i class="fas fa-search text-xs"></i>
                         </div>
                         <input type="text" name="search" value="{{ request('search') }}" placeholder="ENCONTRAR CLIENTE POR NOME..."
                                class="w-full bg-[#121212] border border-zinc-800 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl py-4 pl-12 pr-4 focus:border-[#D4AF37] focus:ring-0 outline-none transition-all placeholder-zinc-700">
-
-                        @if(request('search'))
-                            <a href="{{ route('admin.customers', ['filter' => $filter]) }}" class="absolute inset-y-0 right-4 flex items-center text-zinc-600 hover:text-red-500">
-                                <i class="fas fa-times-circle"></i>
-                            </a>
-                        @endif
                     </form>
                 </div>
             </div>
 
+            {{-- Tabela de Clientes --}}
             <div class="bg-[#121212] border border-zinc-800 rounded-3xl overflow-hidden shadow-2xl mb-10">
                 <div class="p-4 sm:p-6">
-
                     <table class="hidden lg:table w-full text-left border-separate border-spacing-y-2">
                         <thead class="text-zinc-500 uppercase tracking-widest text-[10px]">
                         <tr>
@@ -112,61 +125,48 @@
                         @endforelse
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
 
-                    <div class="lg:hidden space-y-4">
-                        @forelse($customers as $cliente)
-                            <div class="bg-zinc-900/30 border border-zinc-800 p-4 rounded-2xl space-y-4">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-black text-[#D4AF37]">
-                                            {{ strtoupper(substr($cliente->name, 0, 2)) }}
-                                        </div>
-                                        <div>
-                                            <p class="text-sm font-black italic uppercase text-white leading-none">{{ $cliente->name }}</p>
-                                            <p class="text-[10px] text-[#D4AF37] font-mono mt-1">{{ $cliente->whatsapp }}</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex gap-2">
-                                        <a href="https://wa.me/55{{ preg_replace('/[^0-9]/', '', $cliente->whatsapp) }}" target="_blank" class="w-9 h-9 rounded-xl bg-green-500/10 text-green-500 flex items-center justify-center border border-green-500/20">
-                                            <i class="fab fa-whatsapp"></i>
-                                        </a>
-                                        <a href="{{ route('admin.customers.show', $cliente->id) }}" class="w-9 h-9 rounded-xl bg-zinc-800 text-zinc-400 flex items-center justify-center border border-zinc-700">
-                                            <i class="fas fa-eye text-xs"></i>
-                                        </a>
-                                    </div>
-                                </div>
+        {{-- MODAL DE SORTEIO --}}
+        <div x-show="openDraw" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95 backdrop-blur-sm" x-cloak>
+            <div class="bg-[#121212] border border-zinc-800 p-8 rounded-[2.5rem] w-full max-w-md shadow-2xl relative" @click.away="openDraw = false">
+                <h2 class="text-white font-black italic uppercase tracking-tighter text-xl mb-6 flex items-center gap-3">
+                    <i class="fas fa-star text-[#D4AF37]"></i> Configurar Sorteio
+                </h2>
 
-                                <div class="bg-black/20 p-3 rounded-xl border border-zinc-800/50 flex flex-col gap-3">
-                                    @if($cliente->next_date)
-                                        <div class="flex justify-between items-center">
-                                            <span class="text-[9px] uppercase font-black text-zinc-500">Próximo:</span>
-                                            <span class="text-[10px] font-black text-white italic">
-                                                {{ date('d/m', strtotime($cliente->next_date)) }} às {{ $cliente->next_time }}
-                                            </span>
-                                        </div>
-                                        <div class="flex gap-2">
-                                            <form action="{{ route('admin.appointments.updateStatus', $cliente->appointment_id) }}" method="POST" class="flex-1">
-                                                @csrf @method('PATCH')
-                                                <input type="hidden" name="status" value="finished">
-                                                <button type="submit" class="w-full py-2 bg-green-500/10 text-green-500 border border-green-500/20 rounded-lg text-[9px] font-black uppercase tracking-widest">Concluído</button>
-                                            </form>
-                                            <form action="{{ route('admin.appointments.updateStatus', $cliente->appointment_id) }}" method="POST" class="flex-1">
-                                                @csrf @method('PATCH')
-                                                <input type="hidden" name="status" value="canceled">
-                                                <button type="submit" class="w-full py-2 bg-red-500/10 text-red-500 border border-red-500/20 rounded-lg text-[9px] font-black uppercase tracking-widest">Faltou</button>
-                                            </form>
-                                        </div>
-                                    @else
-                                        <p class="text-center text-[9px] text-zinc-600 uppercase font-black italic">Sem reservas pendentes</p>
-                                    @endif
+                <form action="{{ route('admin.customers.draw') }}" method="POST" class="space-y-6">
+                    @csrf
+                    <div class="space-y-4">
+                        <label class="text-[10px] font-black uppercase text-zinc-500 block ml-2">Público do Sorteio</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <label class="relative cursor-pointer">
+                                <input type="radio" name="type" value="all" class="peer hidden" checked>
+                                <div class="p-4 bg-zinc-900 border border-zinc-800 rounded-2xl text-center peer-checked:border-[#D4AF37] peer-checked:text-[#D4AF37] transition-all">
+                                    <span class="text-[9px] font-black uppercase">Todos</span>
                                 </div>
-                            </div>
-                        @empty
-                            <p class="text-center py-10 text-zinc-600 italic text-sm uppercase font-black tracking-widest">Nenhum cliente encontrado</p>
-                        @endforelse
+                            </label>
+                            <label class="relative cursor-pointer">
+                                <input type="radio" name="type" value="recent" class="peer hidden">
+                                <div class="p-4 bg-zinc-900 border border-zinc-800 rounded-2xl text-center peer-checked:border-[#D4AF37] peer-checked:text-[#D4AF37] transition-all">
+                                    <span class="text-[9px] font-black uppercase">Último Mês</span>
+                                </div>
+                            </label>
+                        </div>
                     </div>
 
-                </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black uppercase text-zinc-500 block ml-2">Qtd de Ganhadores</label>
+                        <input type="number" name="quantity" value="1" min="1" max="10"
+                               class="w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-4 text-white text-xs focus:border-[#D4AF37] outline-none font-black">
+                    </div>
+
+                    <div class="pt-4 flex gap-3">
+                        <button type="button" @click="openDraw = false" class="flex-1 bg-zinc-800 text-white py-4 rounded-2xl font-black text-[10px] uppercase italic">Cancelar</button>
+                        <button type="submit" class="flex-[2] bg-[#D4AF37] text-black py-4 rounded-2xl font-black text-[10px] uppercase italic shadow-lg shadow-[#D4AF37]/10">Sortear Agora</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

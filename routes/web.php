@@ -88,6 +88,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Agendamento Avulso (Modal da Agenda)
         Route::post('/agenda/avulso', [AppointmentController::class, 'storeAvulso'])->name('appointments.avulso');
 
+        Route::post('/clientes/sorteio', [CustomerController::class, 'draw'])->name('customers.draw');
+
+
     });
 });
 
