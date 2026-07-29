@@ -1,0 +1,306 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Setting;
+use App\Models\User;
+use App\Models\Appointment;
+use App\Models\Service;
+use App\Models\ScheduleOverride;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use App\Models\Transaction;
+
+class AdminController extends Controller
+{
+    public function index()
+    {
+        $hoje = now()->format('m-d');
+        
+        $aniversariantesHoje = User::whereMonth('birthday', now()->month)
+                           ->whereDay('birthday', now()->day)
+                           ->count();
+    
+        $stats = [
+            'confirmados' => Appointment::where('status', 'confirmed')->count(),
+            'pendentes'   => Appointment::where('status', 'pending')->count(),
+            'cancelados'  => Appointment::where('status', 'canceled')->count(),
+        ];
+    
+        $proximasReservas = Appointment::with(['user', 'service'])
+            ->whereDate('date', now())
+            ->whereIn('status', ['confirmed', 'pending'])
+            ->orderBy('time', 'asc')
+            ->take(5)
+            ->get();
+    
+        $visitorsData = [];
+        $labels = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $diaData = now()->subDays($i);
+            $labels[] = $diaData->translatedFormat('D');
+            $visitorsData[] = Appointment::whereDate('date', $diaData->format('Y-m-d'))->count();
+        }
+    
+        // Receita de Serviços: usa promo_price quando is_promo=true
+        $receitaServicos = Appointment::whereIn('status', ['confirmed', 'finished'])
+                ->join('services', 'appointments.service_id', '=', 'services.id')
+                ->sum(DB::raw('CASE WHEN services.is_promo = 1 AND services.promo_price IS NOT NULL THEN services.promo_price ELSE services.price END'))
+            + Transaction::where('type', 'income')->where('category', 'service')->sum('amount');
+    
+        // 2. Receita de Produtos (Vindo da tabela de Transações)
+        $receitaProdutos = Transaction::where('type', 'income')
+            ->where('category', 'product')
+            ->sum('amount');
+    
+        return view('admin.dashboard', compact('stats', 'proximasReservas', 'aniversariantesHoje', 'visitorsData', 'labels', 'receitaServicos', 'receitaProdutos'));
+    }
+
+    public function agenda(Request $request)
+    {
+        $dataSelecionada = $request->query('date', now()->format('Y-m-d'));
+
+        $reservas = Appointment::with(['service', 'services', 'user'])
+            ->whereDate('date', $dataSelecionada)
+            ->whereNotIn('status', ['expired'])
+            ->orderByRaw("CASE
+                WHEN status IN ('pending', 'confirmed') THEN 0
+                ELSE 1
+            END ASC")
+            ->orderBy('time', 'asc')
+            ->get();
+
+        $hojeCount = Appointment::whereDate('date', now())->count();
+        $mesCount = Appointment::whereMonth('date', now()->month)
+            ->whereYear('date', now()->year)->count();
+
+        $faturamentoDia = Appointment::whereDate('date', $dataSelecionada)
+            ->whereIn('status', ['confirmed', 'finished'])
+            ->join('services', 'appointments.service_id', '=', 'services.id')
+            ->sum(DB::raw('CASE WHEN services.is_promo = 1 AND services.promo_price IS NOT NULL THEN services.promo_price ELSE services.price END'));
+
+        $scheduleOverride    = ScheduleOverride::forDate($dataSelecionada);
+        $scheduleDescription = ScheduleOverride::descriptionForDate($dataSelecionada);
+
+        $allSlots  = ScheduleOverride::getSlotsForDate($dataSelecionada);
+        $estaFechado = empty($allSlots);
+
+        return view('admin.agenda', compact(
+            'reservas', 'hojeCount', 'mesCount', 'faturamentoDia',
+            'dataSelecionada', 'scheduleOverride', 'scheduleDescription', 'estaFechado'
+        ));
+    }
+
+    /**
+     * Processa o agendamento manual (Avulso) feito pelo administrador
+     */
+    public function avulso(Request $request)
+    {
+        $request->validate([
+            'client_name' => 'required|string|max:255',
+            'service_id'  => 'required|exists:services,id',
+            'date'        => 'required|date',
+            'time'        => 'required',
+        ]);
+
+        Appointment::create([
+            'client_name' => $request->client_name,
+            'service_id'  => $request->service_id,
+            'date'        => $request->date,
+            'time'        => $request->time,
+            'status'      => 'confirmed', // Agendamento manual já entra como confirmado
+            'user_id'     => null,        // Não vinculado a um usuário cadastrado
+        ]);
+
+        return redirect()->back()->with('success', 'Agendamento manual realizado com sucesso!');
+    }
+
+    /**
+     * Atualiza o status do agendamento (Finalizar ou Faltou)
+     */
+    public function updateStatus(Request $request, $id)
+    {
+        $appointment = Appointment::findOrFail($id);
+        $appointment->update(['status' => $request->status]);
+
+        return redirect()->back()->with('success', 'Status atualizado!');
+    }
+
+    public function birthdays()
+    {
+        $hoje = now();
+        $aniversariantes = User::where('is_admin', false)
+            ->whereMonth('birthday', $hoje->month)
+            ->whereDay('birthday', $hoje->day)
+            ->get();
+
+        $aniversariantesHoje = $aniversariantes->count();
+        return view('admin.birthdays', compact('aniversariantes', 'aniversariantesHoje'));
+    }
+
+    public function reports(Request $request)
+    {
+        $filter = $request->query('filter', 'mes');
+
+        // Base das Queries
+        $queryBase = Appointment::whereIn('status', ['confirmed', 'finished']);
+        $queryTrans = Transaction::query();
+
+        // Filtros Temporais
+        if ($filter == 'hoje') {
+            $queryBase->whereDate('date', now());
+            $queryTrans->whereDate('date', now());
+        } elseif ($filter == '7dias') {
+            $queryBase->where('date', '>=', now()->subDays(7));
+            $queryTrans->where('date', '>=', now()->subDays(7));
+        } elseif ($filter == 'mes_passado') {
+            $queryBase->whereMonth('date', now()->subMonth()->month)
+                ->whereYear('date', now()->subMonth()->year);
+            $queryTrans->whereMonth('date', now()->subMonth()->month)
+                ->whereYear('date', now()->subMonth()->year);
+        } elseif ($filter == 'ano') {
+            $queryBase->whereYear('date', now()->year);
+            $queryTrans->whereYear('date', now()->year);
+        } else {
+            $queryBase->whereMonth('date', now()->month)
+                ->whereYear('date', now()->year);
+            $queryTrans->whereMonth('date', now()->month)
+                ->whereYear('date', now()->year);
+        }
+
+        $faturamentoServicos = (clone $queryBase)
+                ->join('services', 'appointments.service_id', '=', 'services.id')
+                ->sum(DB::raw('CASE WHEN services.is_promo = 1 AND services.promo_price IS NOT NULL THEN services.promo_price ELSE services.price END'))
+            + (clone $queryTrans)->where('type', 'income')->where('category', 'service')->sum('amount');
+
+        $faturamentoProdutos = (clone $queryTrans)
+            ->where('type', 'income')
+            ->where('category', 'product')
+            ->sum('amount');
+
+        $faturamentoTotal = $faturamentoServicos + $faturamentoProdutos;
+        $totalDespesas = (clone $queryTrans)->where('type', 'expense')->sum('amount');
+        $saldoReal = $faturamentoTotal - $totalDespesas;
+
+        $servicosRealizados = (clone $queryBase)->count();
+        $ticketMedio = $servicosRealizados > 0 ? ($faturamentoTotal / $servicosRealizados) : 0;
+
+        $totalAgendamentos = Appointment::count();
+        $totalFaltas = Appointment::where('status', 'canceled')->count();
+        $taxaNoShow = $totalAgendamentos > 0 ? round(($totalFaltas / $totalAgendamentos) * 100) : 0;
+
+        $labelsMensal = [];
+        $dadosFaturamento = [];
+        for ($i = 4; $i >= 0; $i--) {
+            $mes = now()->subMonths($i);
+            $labelsMensal[] = $mes->translatedFormat('M');
+
+            $faturadoMesAgendamentos = Appointment::whereIn('status', ['confirmed', 'finished'])
+                ->whereMonth('date', $mes->month)->whereYear('date', $mes->year)
+                ->join('services', 'appointments.service_id', '=', 'services.id')
+                ->sum(DB::raw('CASE WHEN services.is_promo = 1 AND services.promo_price IS NOT NULL THEN services.promo_price ELSE services.price END'));
+
+            $faturadoMesTransacoes = Transaction::where('type', 'income')
+                ->whereMonth('date', $mes->month)->whereYear('date', $mes->year)
+                ->sum('amount');
+
+            $dadosFaturamento[] = $faturadoMesAgendamentos + $faturadoMesTransacoes;
+        }
+
+        $topServicos = Appointment::select('services.name', DB::raw('count(*) as total'))
+            ->join('services', 'appointments.service_id', '=', 'services.id')
+            ->groupBy('services.name')
+            ->orderBy('total', 'desc')->take(4)->get();
+
+        $servicosPopulares = [
+            'labels' => $topServicos->pluck('name')->toArray() ?: ['Nenhum'],
+            'data' => $topServicos->pluck('total')->toArray() ?: [0]
+        ];
+
+        $comparativoVendas = [
+            'labels' => ['Serviços', 'Produtos'],
+            'data' => [$faturamentoServicos, $faturamentoProdutos]
+        ];
+
+        return view('admin.reports.index', compact(
+            'faturamentoTotal', 'faturamentoProdutos', 'totalDespesas', 'saldoReal',
+            'ticketMedio', 'servicosRealizados', 'taxaNoShow', 'labelsMensal',
+            'dadosFaturamento', 'servicosPopulares', 'comparativoVendas', 'filter'
+        ));
+    }
+
+    public function storeTransaction(Request $request)
+    {
+        $request->validate([
+            'description' => 'required|string|max:255',
+            'amount' => 'required|numeric|min:0.01',
+            'type' => 'required|in:entrada,saida',
+            'category' => 'nullable|in:service,product'
+        ]);
+
+        Transaction::create([
+            'description' => $request->description,
+            'amount' => $request->amount,
+            'type' => $request->type == 'entrada' ? 'income' : 'expense',
+            'category' => $request->type == 'entrada' ? ($request->category ?? 'service') : 'expense',
+            'date' => now(),
+        ]);
+
+        return redirect()->back()->with('success', 'Lançamento registrado com sucesso!');
+    }
+
+    public function settings()
+    {
+        $settings = Setting::pluck('value', 'key');
+
+        $barbearia = [
+            'nome' => $settings['unit_name'] ?? 'Barber Nathan',
+            'whatsapp' => $settings['unit_whatsapp'] ?? '(85) 90000-0000',
+            'email' => auth()->user()->email
+        ];
+
+        $reviewCoupon = [
+            'active'  => (bool) ($settings['review_coupon_active'] ?? true),
+            'percent' => (int)  ($settings['review_coupon_percent'] ?? 5),
+        ];
+
+        return view('admin.settings', compact('barbearia', 'reviewCoupon'));
+    }
+
+    public function updateSettings(Request $request)
+    {
+        if ($request->has('unit_name')) {
+            Setting::updateOrCreate(['key' => 'unit_name'], ['value' => $request->unit_name]);
+            Setting::updateOrCreate(['key' => 'unit_whatsapp'], ['value' => $request->unit_whatsapp]);
+
+            return redirect()->back()->with('success', 'Configurações da unidade salvas!');
+        }
+
+        if ($request->has('password') && $request->filled('password')) {
+            $request->validate([
+                'password' => 'required|min:8|confirmed',
+            ]);
+
+            auth()->user()->update([
+                'password' => Hash::make($request->password)
+            ]);
+
+            return redirect()->back()->with('success', 'Senha atualizada com sucesso!');
+        }
+
+        if ($request->has('review_coupon_percent')) {
+            $request->validate([
+                'review_coupon_percent' => 'required|integer|min:1|max:100',
+            ]);
+
+            Setting::updateOrCreate(['key' => 'review_coupon_active'],  ['value' => $request->input('review_coupon_active', '0')]);
+            Setting::updateOrCreate(['key' => 'review_coupon_percent'], ['value' => $request->review_coupon_percent]);
+
+            return redirect()->back()->with('success', 'Configurações do cupom de avaliação salvas!');
+        }
+
+        return redirect()->back();
+    }
+}

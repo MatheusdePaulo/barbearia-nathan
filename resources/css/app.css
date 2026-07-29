@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply font-work-sans bg-brand-bg;
+    }
+    h1, h2, h3, button {
+        @apply font-barlow font-extrabold;
+    }
+}
