@@ -20,8 +20,12 @@ class ServiceAdminController extends Controller
         // Nota: Se você mudou a lógica de aniversariantes para 'amanhã' no AdminController,
         // lembre-se de sincronizar aqui também se necessário.
         $hoje = now()->format('m-d');
+<<<<<<< HEAD
         // CORREÇÃO: MySQL usa DATE_FORMAT em vez de strftime
         $aniversariantesHoje = User::whereRaw("DATE_FORMAT(birthday, '%m-%d') = ?", [$hoje])->count();
+=======
+        $aniversariantesHoje = User::whereRaw("strftime('%m-%d', birthday) = ?", [$hoje])->count();
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
 
         return view('admin.services.index', compact('services', 'aniversariantesHoje'));
     }
@@ -44,12 +48,21 @@ class ServiceAdminController extends Controller
         $service->update([
             'price' => $request->price,
             'duration' => $request->duration,
+<<<<<<< HEAD
             'is_promo' => $request->has('is_promo'),
             'promo_price' => $request->is_promo ? $request->promo_price : null,
             'is_combo' => $request->has('is_combo'),
+=======
+            'is_promo' => $request->has('is_promo'), // Se o checkbox foi marcado, retorna true
+            'promo_price' => $request->is_promo ? $request->promo_price : null, // Limpa o preço promo se desativado
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
         ]);
 
         return redirect()->route('admin.services.index')
             ->with('success', 'Configurações de ' . $service->name . ' atualizadas com sucesso!');
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b

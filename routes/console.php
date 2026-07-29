@@ -6,7 +6,10 @@ use Illuminate\Support\Facades\Schedule;
 
 // Executa o comando de lembretes a cada minuto
 Schedule::command('app:send-appointment-reminders')->everyMinute();
+<<<<<<< HEAD
 Schedule::command('appointments:expirar-pendentes')->everyMinute();
+=======
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
 
 // Tarefa para Aniversariantes (roda todo dia às 08:00)
 Schedule::call(function () {

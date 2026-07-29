@@ -1,0 +1,10 @@
+INSERT INTO services VALUES(1,'Corte Masculino','Corte clássico ou moderno, tesoura e máquina.',30,30,'2026-05-06 16:50:17','2026-05-06 16:58:15','masculino.png');
+INSERT INTO services VALUES(2,'Corte Infantil','Atendimento dedicado para os pequenos.',30,30,'2026-05-06 16:50:17','2026-05-06 16:53:05','infantil.png');
+INSERT INTO services VALUES(3,'Limpeza de Pele','Cuidado completo com esfoliação e hidratação.',35,45,'2026-05-06 16:50:17','2026-05-06 16:50:17','limpeza.png');
+INSERT INTO services VALUES(4,'Barba Esculpida','Alinhamento com navalha e toalha quente.',25,30,'2026-05-06 16:50:17','2026-05-06 16:50:17','barba.png');
+INSERT INTO services VALUES(5,'Limpeza Nasal','Remoção de pelos e higienização completa.',25,15,'2026-05-06 16:50:17','2026-05-06 16:50:17','nazal.png');
+INSERT INTO services VALUES(6,'Progressiva ou Botox','Redução de volume e realinhamento dos fios.',70,90,'2026-05-06 16:50:17','2026-05-06 16:50:17','botox.png');
+INSERT INTO services VALUES(7,'Luzes Corte','Destaque e estilo para o seu cabelo.',90,120,'2026-05-06 16:50:17','2026-05-06 16:50:17','LuzesCorte.png');
+INSERT INTO services VALUES(8,'Nevou Corte','O tratamento completo para o seu visual.',110,150,'2026-05-06 16:50:17','2026-05-06 16:50:17','NevouCorte.png');
+INSERT INTO services VALUES(9,'Combo Master','Corte - Barba. Estilo em um só lugar.',50,60,'2026-05-06 16:50:17','2026-05-06 16:50:17','CorteBarba.png');
+INSERT INTO services VALUES(10,'Combo Premium','Corte - Barba - Sobrancelha completa.',60,75,'2026-05-06 16:50:17','2026-05-06 16:50:17','CorteBarbaSobrancelha.png');

@@ -21,7 +21,11 @@
                 <!-- Estatísticas: Mantendo o alinhamento à esquerda no tablet -->
                 <div class="flex flex-row gap-8 md:gap-10 lg:gap-16">
                     <div class="flex flex-col">
+<<<<<<< HEAD
                         <span class="font-barlow font-extrabold text-3xl md:text-3xl lg:text-5xl text-[#1A1C1E] mb-1">
+=======
+                        <span class="font-barlow font-extrabold text-4xl md:text-3xl lg:text-5xl text-[#1A1C1E] mb-1">
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                             100<span class="text-dark-vanilla opacity-40">%</span>
                         </span>
                         <span class="font-barlow font-bold text-[10px] lg:text-xs text-[#1A1C1E] uppercase tracking-widest leading-tight">
@@ -30,7 +34,11 @@
                     </div>
 
                     <div class="flex flex-col">
+<<<<<<< HEAD
                         <span class="font-barlow font-extrabold text-3xl md:text-3xl lg:text-5xl text-[#1A1C1E] mb-1">
+=======
+                        <span class="font-barlow font-extrabold text-4xl md:text-3xl lg:text-5xl text-[#1A1C1E] mb-1">
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                             10<span class="text-dark-vanilla opacity-40">+</span>
                         </span>
                         <span class="font-barlow font-bold text-[10px] lg:text-xs text-[#1A1C1E] uppercase tracking-widest leading-tight">
@@ -47,7 +55,11 @@
                     <!-- CONTAINER DA IMAGEM COM SOMBRA SUTIL -->
                     <!-- Troquei shadow-2xl por shadow-md para uma sombra mais leve e elegante -->
                     <div class="w-[90%] md:w-[340px] lg:w-[480px] aspect-square md:aspect-[4/5] overflow-hidden shadow-md group-hover:shadow-lg transition-shadow duration-500">
+<<<<<<< HEAD
                         <img src="{{ asset('images/Nathan-trabalhando.webp') }}"
+=======
+                        <img src="{{ asset('images/Nathan-trabalhando.png') }}"
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                              alt="Nathan em ação"
                              class="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-500 scale-110 md:scale-100">
                     </div>

@@ -9,12 +9,19 @@
 
         <div class="flex items-center gap-4 border-l-0 lg:border-l border-zinc-800 pl-0 lg:pl-6 w-full lg:w-auto justify-end">
             <div class="text-right">
+<<<<<<< HEAD
                 {{-- Busca o nome dinamicamente do banco de dados --}}
                 <p class="text-xs font-black uppercase tracking-widest text-white leading-none mb-1">{{ auth()->user()->name }}</p>
                 <p class="text-[9px] text-[#D4AF37] font-bold uppercase tracking-widest leading-none">Administrador</p>
             </div>
             {{-- Atualiza também o avatar para usar o nome dinâmico --}}
             <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=D4AF37&color=000&bold=true" class="w-10 h-10 rounded-xl border border-zinc-800 shadow-xl">
+=======
+                <p class="text-xs font-black uppercase tracking-widest text-white leading-none mb-1">Matheus de Paulo</p>
+                <p class="text-[9px] text-[#D4AF37] font-bold uppercase tracking-widest leading-none">Administrador</p>
+            </div>
+            <img src="https://ui-avatars.com/api/?name=Matheus+de+Paulo&background=D4AF37&color=000&bold=true" class="w-10 h-10 rounded-xl border border-zinc-800 shadow-xl">
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
         </div>
     </header>
 
@@ -58,6 +65,32 @@
                 </div>
             </div>
 
+<<<<<<< HEAD
+=======
+            <div class="block lg:hidden order-2">
+                <div class="bg-[#121212] p-6 rounded-3xl border border-zinc-800 shadow-xl">
+                    <div class="flex items-center justify-between mb-6">
+                        <h4 class="font-black italic uppercase text-[11px] text-white tracking-widest">
+                            {{ now()->translatedFormat('F, Y') }}
+                        </h4>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center;">
+                        @php
+                            $hoje = now()->day;
+                            $ultimoDia = now()->daysInMonth;
+                            $primeiroDiaSemana = now()->startOfMonth()->dayOfWeek;
+                        @endphp
+                        @for ($i = 0; $i < $primeiroDiaSemana; $i++) <span></span> @endfor
+                        @for ($i = 1; $i <= $ultimoDia; $i++)
+                            <span class="flex items-center justify-center text-[10px] w-7 h-7 rounded-lg {{ $i == $hoje ? 'bg-[#D4AF37] text-black font-black shadow-[0_0_15px_rgba(212,175,55,0.5)]' : 'text-zinc-500' }}">
+                                {{ $i }}
+                            </span>
+                        @endfor
+                    </div>
+                </div>
+            </div>
+
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
             <div class="bg-[#121212] border border-zinc-800 rounded-3xl overflow-hidden shadow-2xl order-3">
                 <div class="p-6 border-b border-zinc-800 flex justify-between items-center bg-zinc-900/30">
                     <h3 class="font-black italic uppercase tracking-widest text-xs text-white">Próximas Reservas</h3>
@@ -77,6 +110,10 @@
                             <tbody class="text-zinc-300 text-xs">
                             @forelse($proximasReservas as $reserva)
                                 <tr class="border-b border-zinc-800/50">
+<<<<<<< HEAD
+=======
+                                    {{-- AJUSTE BACK-END: Prioriza o relacionamento 'user' (cliente cadastrado) ou usa o 'client_name' (avulso) --}}
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                                     <td class="py-4 font-bold italic whitespace-nowrap">
                                         {{ $reserva->user->name ?? ($reserva->client_name ?? 'Cliente Avulso') }}
                                     </td>
@@ -117,16 +154,24 @@
                             <h3 class="text-3xl font-black italic text-white mb-2">R$ {{ number_format($receitaServicos + $receitaProdutos, 2, ',', '.') }}</h3>
                             <div class="mt-6 space-y-3 inline-block sm:block text-left">
                                 <div class="flex items-center gap-3 text-[10px] font-bold uppercase text-zinc-400 tracking-tighter">
+<<<<<<< HEAD
                                     <span class="w-2.5 h-2.5 rounded-full bg-[#D4AF37]"></span> Serviços (R$ {{ number_format($receitaServicos, 2, ',', '.') }})
                                 </div>
                                 <div class="flex items-center gap-3 text-[10px] font-bold uppercase text-zinc-400 tracking-tighter">
                                     <span class="w-2.5 h-2.5 rounded-full bg-zinc-700"></span> Produtos (R$ {{ number_format($receitaProdutos, 2, ',', '.') }})
+=======
+                                    <span class="w-2.5 h-2.5 rounded-full bg-[#D4AF37]"></span> Serviços
+                                </div>
+                                <div class="flex items-center gap-3 text-[10px] font-bold uppercase text-zinc-400 tracking-tighter">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-zinc-800"></span> Produtos
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                                 </div>
                             </div>
                         </div>
                         <div class="w-32 h-32 sm:w-40 sm:h-40 relative flex-shrink-0">
                             <canvas id="revenueChart"></canvas>
                             <div class="absolute inset-0 flex flex-col items-center justify-center">
+<<<<<<< HEAD
                                 <span class="text-white font-black text-lg lg:text-xl italic leading-none">
                                     @php
                                         $total = $receitaServicos + $receitaProdutos;
@@ -134,6 +179,9 @@
                                     @endphp
                                     {{ $percent }}%
                                 </span>
+=======
+                                <span class="text-white font-black text-lg lg:text-xl italic leading-none">{{ $receitaServicos > 0 ? '100%' : '0%' }}</span>
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                             </div>
                         </div>
                     </div>
@@ -150,13 +198,21 @@
                 </div>
                 <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center;">
                     @php
+<<<<<<< HEAD
                         $hojeDia = now()->day;
+=======
+                        $hoje = now()->day;
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                         $ultimoDia = now()->daysInMonth;
                         $primeiroDiaSemana = now()->startOfMonth()->dayOfWeek;
                     @endphp
                     @for ($i = 0; $i < $primeiroDiaSemana; $i++) <span></span> @endfor
                     @for ($i = 1; $i <= $ultimoDia; $i++)
+<<<<<<< HEAD
                         <span class="flex items-center justify-center text-[10px] w-7 h-7 rounded-lg {{ $i == $hojeDia ? 'bg-[#D4AF37] text-black font-black shadow-[0_0_15_rgba(212,175,55,0.5)]' : 'text-zinc-500' }}">
+=======
+                        <span class="flex items-center justify-center text-[10px] w-7 h-7 rounded-lg {{ $i == $hoje ? 'bg-[#D4AF37] text-black font-black shadow-[0_0_15_rgba(212,175,55,0.5)]' : 'text-zinc-500' }}">
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                             {{ $i }}
                         </span>
                     @endfor
@@ -211,11 +267,19 @@
                 labels: ['Serviços', 'Produtos'],
                 datasets: [{
                     data: [{{ $receitaServicos }}, {{ $receitaProdutos }}],
+<<<<<<< HEAD
                     backgroundColor: ['#D4AF37', '#3f3f46'],
+=======
+                    backgroundColor: ['#D4AF37', '#1a1a1a'],
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                     borderWidth: 0
                 }]
             },
             options: { cutout: '80%', plugins: { legend: { display: false } } }
         });
     </script>
+<<<<<<< HEAD
 @endsection
+=======
+@endsection
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b

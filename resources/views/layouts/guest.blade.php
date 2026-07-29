@@ -7,9 +7,12 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
+<<<<<<< HEAD
     <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
     <link rel="apple-touch-icon" href="{{ asset('favicon.ico') }}">
 
+=======
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
     <!-- Scripts e CSS -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 

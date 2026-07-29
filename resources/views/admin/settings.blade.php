@@ -3,6 +3,7 @@
 @section('content')
     <div class="p-4 sm:p-8 space-y-8 bg-[#050505] min-h-screen">
 
+<<<<<<< HEAD
         {{-- ALERTAS DE SUCESSO OU ERRO GERAL --}}
         @if(session('success'))
             <div class="bg-green-500/20 border-b border-green-500 text-green-500 px-6 py-3 text-xs font-black uppercase italic tracking-widest animate-pulse rounded-xl">
@@ -15,6 +16,8 @@
             </div>
         @endif
 
+=======
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
         {{-- HEADER --}}
         <div class="text-center lg:text-left">
             <h1 class="text-xl sm:text-2xl font-black italic text-white uppercase tracking-tighter">Configurações do Sistema</h1>
@@ -68,10 +71,15 @@
                         <i class="fas fa-store text-[#D4AF37]"></i> Dados da Unidade
                     </h4>
 
+<<<<<<< HEAD
+=======
+                    {{-- Definido os names unit_name e unit_whatsapp para o Controller --}}
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                     <form action="{{ route('admin.settings.update') }}" method="POST" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         @csrf
                         <div class="space-y-2">
                             <label class="text-[9px] font-black uppercase text-zinc-500 ml-2">Nome da Barbearia</label>
+<<<<<<< HEAD
                             <input type="text" name="unit_name" value="{{ $barbearia['nome'] }}" required
                                    class="w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-4 text-sm text-white focus:border-[#D4AF37] outline-none transition-all">
                         </div>
@@ -79,6 +87,15 @@
                             <label class="text-[9px] font-black uppercase text-zinc-500 ml-2">WhatsApp de Contato</label>
                             <input type="text" name="unit_whatsapp" value="{{ $barbearia['whatsapp'] }}" required
                                    class="w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-4 text-sm text-white focus:border-[#D4AF37] outline-none transition-all">
+=======
+                            <input type="text" name="unit_name" value="{{ $barbearia['nome'] }}"
+                                   class="w-full bg-zinc-900 border-zinc-800 rounded-2xl p-4 text-sm text-white focus:border-[#D4AF37] outline-none transition-all">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[9px] font-black uppercase text-zinc-500 ml-2">WhatsApp de Contato</label>
+                            <input type="text" name="unit_whatsapp" value="{{ $barbearia['whatsapp'] }}"
+                                   class="w-full bg-zinc-900 border-zinc-800 rounded-2xl p-4 text-sm text-white focus:border-[#D4AF37] outline-none transition-all">
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                         </div>
                         <div class="sm:col-span-2 flex justify-end">
                             <button type="submit" class="w-full sm:w-auto bg-[#D4AF37] text-black px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-lg active:scale-95 transition-all">Salvar Unidade</button>
@@ -86,6 +103,7 @@
                     </form>
                 </div>
 
+<<<<<<< HEAD
                 {{-- CUPOM DE AVALIAÇÃO GOOGLE --}}
                 <div class="bg-[#121212] p-6 sm:p-8 rounded-[2.5rem] border border-zinc-800 shadow-2xl">
                     <h4 class="text-white font-black italic uppercase text-xs tracking-widest mb-8 flex items-center gap-3">
@@ -121,6 +139,9 @@
                 </div>
 
                 {{-- SEGURANÇA E ALTERAÇÃO DE SENHA --}}
+=======
+                {{-- SEGURANÇA --}}
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                 <div class="bg-[#121212] p-6 sm:p-8 rounded-[2.5rem] border border-zinc-800 shadow-2xl">
                     <h4 class="text-white font-black italic uppercase text-xs tracking-widest mb-8 flex items-center gap-3">
                         <i class="fas fa-shield-alt text-[#D4AF37]"></i> Segurança e Senha
@@ -131,6 +152,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <div class="space-y-2">
                                 <label class="text-[9px] font-black uppercase text-zinc-500 ml-2">Nova Senha</label>
+<<<<<<< HEAD
                                 <input type="password" name="password" placeholder="••••••••" required
                                        class="w-full bg-zinc-900 border rounded-2xl p-4 text-sm text-white focus:border-[#D4AF37] outline-none transition-all @error('password') border-red-500 @else border-zinc-800 @enderror">
                                 @error('password') 
@@ -145,6 +167,20 @@
                         </div>
                         <div class="flex justify-end">
                             <button type="submit" class="w-full sm:w-auto bg-[#D4AF37] text-black px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-opacity-90 shadow-lg active:scale-95 transition-all">Atualizar Senha</button>
+=======
+                                <input type="password" name="password" placeholder="••••••••"
+                                       class="w-full bg-zinc-900 border-zinc-800 rounded-2xl p-4 text-sm text-white focus:border-[#D4AF37] outline-none @error('password') border-red-500 @enderror">
+                                @error('password') <span class="text-[8px] text-red-500 uppercase font-black ml-2">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[9px] font-black uppercase text-zinc-500 ml-2">Confirmar Senha</label>
+                                <input type="password" name="password_confirmation" placeholder="••••••••"
+                                       class="w-full bg-zinc-900 border-zinc-800 rounded-2xl p-4 text-sm text-white focus:border-[#D4AF37] outline-none">
+                            </div>
+                        </div>
+                        <div class="flex justify-end">
+                            <button type="submit" class="w-full sm:w-auto bg-zinc-800 text-white px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-zinc-700 transition-all">Atualizar Senha</button>
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                         </div>
                     </form>
                 </div>
@@ -152,4 +188,8 @@
 
         </div>
     </div>
+<<<<<<< HEAD
 @endsection
+=======
+@endsection
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b

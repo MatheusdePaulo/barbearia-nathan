@@ -24,3 +24,7 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+<<<<<<< HEAD
+=======
+*.sqlite
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b

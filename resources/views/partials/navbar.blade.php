@@ -1,11 +1,25 @@
+<<<<<<< HEAD
+=======
+<!-- resources/views/partials/navbar.blade.php -->
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
 <header class="w-full z-50 transition-all duration-300"
         x-data="{ scrolled: false }"
         @scroll.window="scrolled = (window.pageYOffset > 50) ? true : false"
         :class="{
+<<<<<<< HEAD
             'fixed top-0 left-0 bg-[#1A1C1E]/60 backdrop-blur-md py-2': scrolled && window.innerWidth >= 1024,
             'relative bg-[#1A1C1E]/80 py-3 lg:py-4': !scrolled || window.innerWidth < 1024
         }">
 
+=======
+            'fixed top-0 left-0': window.innerWidth >= 1024 || !scrolled,
+            'hidden': window.innerWidth < 1024 && scrolled,
+            'fixed top-0 left-0 bg-[#1A1C1E]/60 backdrop-blur-md py-2': scrolled && window.innerWidth >= 1024,
+            'relative bg-[#1A1C1E]/80 py-3 lg:py-4': !scrolled
+        }">
+
+    <!-- TOPBAR -->
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
     <div x-show="!scrolled"
          x-transition:enter="transition ease-out duration-300"
          class="hidden lg:block w-full bg-[#1A1C1E]/80 text-white/80 py-1.5 border-b border-white/10 font-work-sans text-[11px]">
@@ -21,12 +35,27 @@
 
             <div class="flex items-center gap-3">
                 @guest
+<<<<<<< HEAD
                     <a href="{{ route('login') }}" class="hover:text-dark-vanilla transition-colors uppercase tracking-widest font-bold cursor-pointer">Entrar</a>
                     <span class="text-white/20">|</span>
                     <a href="{{ route('register') }}" class="hover:text-dark-vanilla transition-colors uppercase tracking-widest font-bold cursor-pointer">Criar conta</a>
                 @endguest
 
                 @auth
+=======
+                    {{-- SE NÃO ESTIVER LOGADO --}}
+                    <a href="{{ route('login') }}"
+                       onclick="window.location.href='{{ route('login') }}'"
+                       class="hover:text-dark-vanilla transition-colors uppercase tracking-widest font-bold cursor-pointer">Entrar</a>
+                    <span class="text-white/20">|</span>
+                    <a href="{{ route('register') }}"
+                       onclick="window.location.href='{{ route('register') }}'"
+                       class="hover:text-dark-vanilla transition-colors uppercase tracking-widest font-bold cursor-pointer">Criar conta</a>
+                @endguest
+
+                @auth
+                    {{-- SE ESTIVER LOGADO --}}
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                     <span class="text-dark-vanilla font-bold uppercase tracking-widest italic">Olá, {{ Auth::user()->name }}</span>
                     <span class="text-white/20">|</span>
                     <form method="POST" action="{{ route('logout') }}" class="inline">
@@ -39,22 +68,42 @@
         </div>
     </div>
 
+<<<<<<< HEAD
     <nav class="w-full transition-all duration-300" x-data="{ mobileMenuOpen: false }">
         <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
 
             <div class="flex-shrink-0">
                 <a href="/#hero">
                     <img src="{{ asset('images/logotipo_nathan.webp') }}"
+=======
+    <!-- MAIN NAVBAR -->
+    <nav class="w-full transition-all duration-300" x-data="{ mobileMenuOpen: false }">
+        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+
+            <!-- LOGO PRINCIPAL -->
+            <div class="hidden lg:block flex-shrink-0">
+                <a href="/#hero">
+                    <img src="{{ asset('images/logotipo_nathan.png') }}"
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                          alt="Barber Nathan"
                          class="h-10 lg:h-14 w-40 lg:w-48 object-contain">
                 </a>
             </div>
 
+<<<<<<< HEAD
             <button @click="mobileMenuOpen = true" class="lg:hidden flex items-center gap-3 text-white p-2 hover:bg-white/5 transition-colors rounded-lg">
                 <span class="font-barlow font-bold uppercase tracking-widest text-xs text-[#DEC7A6]">Menu</span>
                 <i class="fas fa-bars text-2xl md:text-3xl"></i>
             </button>
 
+=======
+            <!-- BOTÃO HAMBURGER -->
+            <button @click="mobileMenuOpen = true" class="lg:hidden text-white p-3 md:p-4 hover:bg-white/5 transition-colors rounded-lg">
+                <i class="fas fa-bars text-2xl md:text-3xl"></i>
+            </button>
+
+            <!-- LINKS DESKTOP -->
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
             <div class="hidden lg:flex items-center gap-10">
                 <ul class="flex items-center gap-8 font-work-sans text-white text-[12px] uppercase tracking-[0.15em]">
                     <li><a href="/#hero" class="hover:text-dark-vanilla transition-colors">Início</a></li>
@@ -65,14 +114,25 @@
                     <li><a href="/#contato" class="hover:text-dark-vanilla transition-colors">Contato</a></li>
                 </ul>
 
+<<<<<<< HEAD
+=======
+                {{-- MANTIDO BOTÃO AGENDAR AGORA COMO SOLICITADO --}}
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                 <a href="{{ route('appointments.create', ['service' => 'geral']) }}" class="font-barlow font-extrabold text-white border border-dark-vanilla px-5 py-1.5 rounded-full hover:bg-dark-vanilla hover:text-[#1A1C1E] transition-all duration-300 uppercase text-[11px] tracking-tighter">
                     AGENDAR AGORA
                 </a>
             </div>
         </div>
 
+<<<<<<< HEAD
         <div x-show="mobileMenuOpen" x-cloak @click="mobileMenuOpen = false" class="fixed inset-0 bg-black/60 z-[60]"></div>
 
+=======
+        <!-- OVERLAY SIDEBAR -->
+        <div x-show="mobileMenuOpen" x-cloak @click="mobileMenuOpen = false" class="fixed inset-0 bg-black/60 z-[60]"></div>
+
+        <!-- SIDEBAR MOBILE & TABLET -->
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
         <div x-show="mobileMenuOpen"
              x-cloak
              x-transition:enter="transition ease-out duration-300"
@@ -84,11 +144,16 @@
              class="fixed inset-y-0 right-0 w-[85%] md:w-[450px] bg-[#141517] z-[70] shadow-2xl lg:hidden p-8 md:p-12 overflow-y-auto">
 
             <div class="flex flex-col h-full">
+<<<<<<< HEAD
+=======
+                <!-- Top Sidebar -->
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                 <div class="relative flex flex-col items-center mb-10">
                     <button @click="mobileMenuOpen = false" class="absolute right-0 top-0 text-white p-2">
                         <i class="fas fa-times text-2xl md:text-3xl"></i>
                     </button>
                     <div class="mt-6">
+<<<<<<< HEAD
                         <img src="{{ asset('images/logotipo_nathan.webp') }}" alt="Barber Nathan" class="w-44 md:w-60 h-auto object-contain">
                     </div>
                 </div>
@@ -111,27 +176,60 @@
                     </li>
                     <li class="flex items-center gap-4 hover:text-dark-vanilla transition-colors">
                         <i class="fas fa-envelope w-8 text-center text-dark-vanilla"></i> <a href="/#contato" @click="mobileMenuOpen = false">Contato</a>
+=======
+                        <img src="{{ asset('images/logotipo_nathan.png') }}" alt="Barber Nathan" class="w-44 md:w-60 h-auto object-contain">
+                    </div>
+                </div>
+
+                <!-- Links Sidebar -->
+                <ul class="flex flex-col gap-6 md:gap-8 font-work-sans text-white text-sm md:text-lg uppercase tracking-[0.2em]">
+                    <li class="flex items-center gap-4 hover:text-dark-vanilla transition-colors">
+                        <i class="fas fa-home w-8 text-center"></i> <a href="/#hero" @click="mobileMenuOpen = false">Início</a>
+                    </li>
+                    <li class="flex items-center gap-4 hover:text-dark-vanilla transition-colors">
+                        <i class="far fa-user w-8 text-center"></i> <a href="/#profissional" @click="mobileMenuOpen = false">Sobre</a>
+                    </li>
+                    <li class="flex items-center gap-4 hover:text-dark-vanilla transition-colors">
+                        <i class="fas fa-cut w-8 text-center"></i> <a href="/#servicos" @click="mobileMenuOpen = false">Serviços</a>
+                    </li>
+                    <li class="flex items-center gap-4 hover:text-dark-vanilla transition-colors">
+                        <i class="far fa-calendar-alt w-8 text-center"></i> <a href="/#agendar-sessao" @click="mobileMenuOpen = false">Agendar</a>
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                     </li>
 
                     @guest
                         <li class="flex items-center gap-4 pt-4 mt-2 border-t border-white/10">
                             <i class="fas fa-user-circle w-8 text-center text-dark-vanilla"></i>
                             <div class="flex items-center gap-3">
+<<<<<<< HEAD
                                 <a href="{{ route('login') }}" class="hover:text-dark-vanilla transition-colors uppercase tracking-widest font-bold text-xs">Entrar</a>
                                 <span class="text-white/20">|</span>
                                 <a href="{{ route('register') }}" class="hover:text-dark-vanilla transition-colors uppercase tracking-widest font-bold text-xs">Criar conta</a>
+=======
+                                <a href="{{ route('login') }}" onclick="window.location.href='{{ route('login') }}'" class="hover:text-dark-vanilla transition-colors uppercase tracking-widest font-bold cursor-pointer text-xs">Entrar</a>
+                                <span class="text-white/20">|</span>
+                                <a href="{{ route('register') }}" onclick="window.location.href='{{ route('register') }}'" class="hover:text-dark-vanilla transition-colors uppercase tracking-widest font-bold cursor-pointer text-xs">Criar conta</a>
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                             </div>
                         </li>
                     @endguest
 
                     @auth
                         <li class="flex flex-col gap-4 pt-4 mt-2 border-t border-white/10">
+<<<<<<< HEAD
                             <div class="flex items-center gap-4 text-dark-vanilla font-bold italic text-sm">
+=======
+                            <div class="flex items-center gap-4 text-dark-vanilla font-bold italic">
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                                 <i class="fas fa-user-check w-8 text-center"></i> <span>{{ Auth::user()->name }}</span>
                             </div>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
+<<<<<<< HEAD
                                 <button type="submit" class="flex items-center gap-4 text-red-500 hover:text-red-400 font-bold uppercase text-[11px] tracking-widest">
+=======
+                                <button type="submit" class="flex items-center gap-4 text-red-500 hover:text-red-400 font-bold uppercase text-xs">
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                                     <i class="fas fa-sign-out-alt w-8 text-center"></i> Sair do Sistema
                                 </button>
                             </form>
@@ -141,6 +239,7 @@
 
                 <hr class="my-8 border-white/10">
 
+<<<<<<< HEAD
                 <div class="relative flex flex-col items-center bg-[#1A1C1E] p-6 md:p-10 rounded-2xl border border-white/5 shadow-inner mt-auto"
                      x-data="{ wifiOpen: false, copied: false }">
                     <p class="text-[9px] md:text-[11px] font-barlow font-extrabold text-dark-vanilla mb-3 tracking-[0.3em] uppercase text-center">WIFI DA BARBEARIA</p>
@@ -202,9 +301,20 @@
                         <a href="https://wa.me/558586839615" target="_blank" class="transition-transform duration-300 hover:scale-110 block w-12 h-12">
                             <img src="{{ asset('images/zap.webp') }}" alt="WhatsApp" class="w-full h-full object-cover rounded-xl shadow-lg">
                         </a>
+=======
+                <!-- Bloco de WIFI/QR Code -->
+                <div class="flex flex-col items-center bg-[#1A1C1E] p-6 md:p-10 rounded-2xl border border-white/5 shadow-inner mt-auto">
+                    <p class="text-[9px] md:text-[11px] font-barlow font-extrabold text-dark-vanilla mb-4 tracking-[0.3em] uppercase text-center">WIFI DA BARBEARIA</p>
+                    <div class="bg-white p-3 md:p-5 rounded-xl">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=WIFI_NATHAN" alt="QR Code" class="w-28 md:w-36 h-28 md:h-36">
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                     </div>
                 </div>
             </div>
         </div>
     </nav>
+<<<<<<< HEAD
 </header>
+=======
+</header>
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b

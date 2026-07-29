@@ -17,7 +17,11 @@
             <!-- Item 1: Confiança -->
             <div class="flex flex-col items-start md:items-center text-left md:text-center group">
                 <div class="flex items-center gap-4 mb-3 md:flex-col md:mb-6">
+<<<<<<< HEAD
                     <img src="{{ asset('images/confianca.webp') }}" alt="Confiança" class="w-10 h-10 md:w-12 md:h-12 object-contain">
+=======
+                    <img src="{{ asset('images/confianca.png') }}" alt="Confiança" class="w-10 h-10 md:w-12 md:h-12 object-contain">
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                     <h4 class="font-barlow font-extrabold text-xl text-[#1A1C1E] uppercase tracking-tight relative md:mt-4">
                         Confiança
                         <span class="absolute -bottom-1 left-0 md:left-1/2 md:-translate-x-1/2 w-full md:w-8 h-[2px] bg-[#DEC7A6]/50"></span>
@@ -31,7 +35,11 @@
             <!-- Item 2: Expertise -->
             <div class="flex flex-col items-end md:items-center text-right md:text-center group">
                 <div class="flex flex-row-reverse items-center gap-4 mb-3 md:flex-col md:mb-6">
+<<<<<<< HEAD
                     <img src="{{ asset('images/expertise.webp') }}" alt="Expertise" class="w-10 h-10 md:w-12 md:h-12 object-contain">
+=======
+                    <img src="{{ asset('images/expertise.png') }}" alt="Expertise" class="w-10 h-10 md:w-12 md:h-12 object-contain">
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                     <h4 class="font-barlow font-extrabold text-xl text-[#1A1C1E] uppercase tracking-tight relative md:mt-4">
                         Expertise
                         <span class="absolute -bottom-1 right-0 md:left-1/2 md:-translate-x-1/2 w-full md:w-8 h-[2px] bg-[#DEC7A6]/50"></span>
@@ -45,7 +53,11 @@
             <!-- Item 3: Profissionalismo -->
             <div class="flex flex-col items-start md:items-center text-left md:text-center group">
                 <div class="flex items-center gap-4 mb-3 md:flex-col md:mb-6">
+<<<<<<< HEAD
                     <img src="{{ asset('images/profissionalismo.webp') }}" alt="Profissionalismo" class="w-10 h-10 md:w-12 md:h-12 object-contain">
+=======
+                    <img src="{{ asset('images/profissionalismo.png') }}" alt="Profissionalismo" class="w-10 h-10 md:w-12 md:h-12 object-contain">
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                     <h4 class="font-barlow font-extrabold text-xl text-[#1A1C1E] uppercase tracking-tight relative md:mt-4">
                         Profissionalismo
                         <span class="absolute -bottom-1 left-0 md:left-1/2 md:-translate-x-1/2 w-full md:w-8 h-[2px] bg-[#DEC7A6]/50"></span>
@@ -65,7 +77,11 @@
 
                 <!-- Google -->
                 <div class="flex flex-col items-center text-center flex-1 md:w-auto">
+<<<<<<< HEAD
                     <img src="{{ asset('images/google.webp') }}" alt="Google" class="w-8 h-8 md:w-10 md:h-10 object-contain mb-3">
+=======
+                    <img src="{{ asset('images/google.png') }}" alt="Google" class="w-8 h-8 md:w-10 md:h-10 object-contain mb-3">
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                     <p class="font-barlow font-bold text-[10px] md:text-xs text-[#1A1C1E] uppercase tracking-widest mb-1">Google</p>
                     <span class="font-barlow font-black text-4xl md:text-6xl text-[#1A1C1E] leading-none mb-2">5.0</span>
                     <div class="flex text-[#DEC7A6] text-[8px] md:text-[10px] mb-1">
@@ -74,6 +90,7 @@
                     <p class="font-work-sans text-[10px] md:text-[11px] font-medium text-zinc-400 uppercase tracking-widest">3 reviews</p>
                 </div>
 
+<<<<<<< HEAD
                 <!-- Avaliações do Site -->
                 <div class="flex flex-col items-center text-center flex-1 md:order-3 md:w-auto">
                     <img src="{{ asset('images/logotipo_nathan.png') }}" alt="Nathan do Corte" class="w-12 h-12 md:w-16 md:h-16 object-contain mb-3 mix-blend-multiply">
@@ -96,13 +113,28 @@
                         </div>
                         <p class="font-work-sans text-[10px] md:text-[11px] font-medium text-zinc-400 uppercase tracking-widest">Seja o primeiro!</p>
                     @endif
+=======
+                <!-- TripAdvisor -->
+                <div class="flex flex-col items-center text-center flex-1 md:order-3 md:w-auto">
+                    <img src="{{ asset('images/tripadvisor.png') }}" alt="TripAdvisor" class="w-8 h-8 md:w-10 md:h-10 object-contain mb-3">
+                    <p class="font-barlow font-bold text-[10px] md:text-xs text-[#1A1C1E] uppercase tracking-widest mb-1">TripAdvisor</p>
+                    <span class="font-barlow font-black text-4xl md:text-6xl text-[#1A1C1E] leading-none mb-2">5.0</span>
+                    <div class="flex text-[#DEC7A6] text-[8px] md:text-[10px] mb-1">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="font-work-sans text-[10px] md:text-[11px] font-medium text-zinc-400 uppercase tracking-widest">3 reviews</p>
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                 </div>
             </div>
 
             <!-- Depoimento Central (Embaixo das notas no mobile, centro do grid no desktop) -->
             <div class="relative w-full max-w-md bg-white border border-[#DEC7A6]/30 p-8 pt-12 mx-auto md:order-2">
                 <div class="absolute -top-10 left-1/2 -translate-x-1/2 w-20 h-20 rounded-full border-4 border-white shadow-lg overflow-hidden z-10">
+<<<<<<< HEAD
                     <img src="{{ asset('images/matheus.webp') }}" alt="Matheus de Paulo" class="w-full h-full object-cover">
+=======
+                    <img src="{{ asset('images/matheus.png') }}" alt="Matheus de Paulo" class="w-full h-full object-cover">
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                 </div>
                 <div class="text-center space-y-4">
                     <div class="flex justify-center text-[#DEC7A6] text-sm">

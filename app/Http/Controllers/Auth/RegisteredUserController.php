@@ -8,16 +8,29 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+<<<<<<< HEAD
 use Illuminate\Validation\Rules;
+=======
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules;
+use Illuminate\Validation\ValidationException;
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
 use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
 {
+<<<<<<< HEAD
+=======
+    /**
+     * Display the registration view.
+     */
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
     public function create(): View
     {
         return view('auth.register');
     }
 
+<<<<<<< HEAD
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
@@ -37,6 +50,27 @@ class RegisteredUserController extends Controller
             'whatsapp' => $whatsappLimpo,
             'birthday' => $request->filled('birthday') ? $request->birthday : null,
             'is_admin' => false,
+=======
+    /**
+     * Handle an incoming registration request.
+     *
+     * @throws ValidationException
+     */
+    public function store(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            // CPF REMOVIDO DAQUI
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            // CPF REMOVIDO DAQUI
+            'password' => Hash::make($request->password),
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
         ]);
 
         event(new Registered($user));
@@ -44,4 +78,8 @@ class RegisteredUserController extends Controller
 
         return redirect(route('home', absolute: false));
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b

@@ -26,7 +26,11 @@
                         @endif
 
                         <img src="{{ asset('images/' . $service->image) }}"
+<<<<<<< HEAD
                              class="w-10 h-10 md:w-12 lg:w-14 md:h-12 lg:h-14 object-contain {{ $service->is_promo ? '' : 'grayscale' }} group-hover:grayscale-0 transition-all shrink-0 {{ $service->image === 'social.webp' ? 'scale-[1.3]' : '' }}"
+=======
+                             class="w-10 h-10 md:w-12 lg:w-14 md:h-12 lg:h-14 object-contain {{ $service->is_promo ? '' : 'grayscale' }} group-hover:grayscale-0 transition-all shrink-0"
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                              alt="{{ $service->name }}">
 
                         <div class="text-left">

@@ -100,7 +100,11 @@
                     @csrf
                     @method('PUT')
 
+<<<<<<< HEAD
                     {{-- Toggle de Promoção com Visibilidade Reforçada --}}
+=======
+                    {{-- Toggle de Promoção --}}
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                     <div class="flex items-center justify-between p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800">
                         <div class="flex flex-col">
                             <span class="text-[10px] font-black uppercase text-white italic">Ativar Promoção?</span>
@@ -108,6 +112,7 @@
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" name="is_promo" x-model="activeService.is_promo" class="sr-only peer">
+<<<<<<< HEAD
                             <div class="w-11 h-6 bg-zinc-700 rounded-full peer 
                                         peer-checked:bg-[#D4AF37] 
                                         after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
@@ -115,6 +120,9 @@
                                         after:h-5 after:w-5 after:transition-all 
                                         peer-checked:after:translate-x-full peer-checked:after:border-white transition-colors">
                             </div>
+=======
+                            <div class="w-11 h-6 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-500 after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#D4AF37]"></div>
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                         </label>
                     </div>
 
@@ -124,7 +132,11 @@
                     </div>
 
                     {{-- Campo de Preço Promocional (Apenas se o Toggle estiver ativo) --}}
+<<<<<<< HEAD
                     <div class="space-y-2" x-show="activeService.is_promo" x-transition>
+=======
+                    <div class="space-y-2 animate-pulse" x-show="activeService.is_promo">
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                         <label class="text-[9px] font-black uppercase text-[#D4AF37] ml-2 tracking-widest italic">Preço Promocional Site (R$)</label>
                         <input type="number" step="0.01" name="promo_price" x-model="activeService.promo_price" class="w-full bg-zinc-900 border-[#D4AF37]/50 rounded-2xl py-4 px-5 text-white text-sm focus:border-[#D4AF37] outline-none font-mono shadow-[0_0_15px_rgba(212,175,55,0.05)]">
                     </div>
@@ -142,4 +154,8 @@
             </div>
         </div>
     </div>
+<<<<<<< HEAD
 @endsection
+=======
+@endsection
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b

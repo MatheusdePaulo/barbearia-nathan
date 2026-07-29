@@ -13,8 +13,14 @@
                         <div class="flex flex-wrap justify-center gap-4">
                             @foreach(session('winners') as $winner)
                                 <span class="bg-black text-white px-4 py-2 rounded-full font-black uppercase text-[10px] border border-[#D4AF37]">
+<<<<<<< HEAD
                                     {{ is_object($winner) ? $winner->name : $winner['name'] }}
                                 </span>
+=======
+                    {{-- Tentamos ler como objeto, se falhar, lemos como array --}}
+                                    {{ is_object($winner) ? $winner->name : $winner['name'] }}
+                </span>
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                             @endforeach
                         </div>
                     </div>
@@ -57,8 +63,13 @@
 
             {{-- Tabela de Clientes --}}
             <div class="bg-[#121212] border border-zinc-800 rounded-3xl overflow-hidden shadow-2xl mb-10">
+<<<<<<< HEAD
                 <div class="p-4 sm:p-6 overflow-x-auto custom-scroll">
                     <table class="w-full text-left border-separate border-spacing-y-2 min-w-[700px]">
+=======
+                <div class="p-4 sm:p-6">
+                    <table class="hidden lg:table w-full text-left border-separate border-spacing-y-2">
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                         <thead class="text-zinc-500 uppercase tracking-widest text-[10px]">
                         <tr>
                             <th class="pb-4 px-4 font-bold">Cliente</th>
@@ -72,7 +83,11 @@
                             <tr class="bg-zinc-900/20 hover:bg-zinc-900/50 transition-all group">
                                 <td class="py-4 px-4 rounded-l-2xl border-y border-l border-zinc-800/50 group-hover:border-[#D4AF37]/30">
                                     <div class="flex items-center gap-3">
+<<<<<<< HEAD
                                         <div class="w-9 h-9 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-[10px] font-black text-[#D4AF37] shrink-0">
+=======
+                                        <div class="w-9 h-9 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-[10px] font-black text-[#D4AF37]">
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                                             {{ strtoupper(substr($cliente->name, 0, 2)) }}
                                         </div>
                                         <div>
@@ -81,12 +96,20 @@
                                         </div>
                                     </div>
                                 </td>
+<<<<<<< HEAD
                                 <td class="py-4 px-4 border-y border-zinc-800/50 group-hover:border-[#D4AF37]/30 font-mono text-[#D4AF37] whitespace-nowrap">
+=======
+                                <td class="py-4 px-4 border-y border-zinc-800/50 group-hover:border-[#D4AF37]/30 font-mono text-[#D4AF37]">
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                                     {{ $cliente->whatsapp }}
                                 </td>
                                 <td class="py-4 px-4 border-y border-zinc-800/50 group-hover:border-[#D4AF37]/30">
                                     @if($cliente->next_date)
+<<<<<<< HEAD
                                         <div class="flex flex-col gap-2 min-w-[120px]">
+=======
+                                        <div class="flex flex-col gap-2">
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                                             <div class="text-zinc-400 text-[10px]">
                                                 <span class="text-white font-bold">{{ date('d/m', strtotime($cliente->next_date)) }}</span>
                                                 às <span class="text-[#D4AF37] font-bold">{{ $cliente->next_time }}</span>
@@ -104,11 +127,16 @@
                                                 </form>
                                             </div>
                                         </div>
+<<<<<<< HEAD
                                     @业务else
+=======
+                                    @else
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                                         <span class="opacity-30 italic text-[10px]">Sem reservas</span>
                                     @endif
                                 </td>
                                 <td class="py-4 px-4 text-right rounded-r-2xl border-y border-r border-zinc-800/50 group-hover:border-[#D4AF37]/30">
+<<<<<<< HEAD
                                     @php
                                         $phone      = preg_replace('/[^0-9]/', '', $cliente->whatsapp ?? '');
                                         $reviewLink = $cliente->whatsapp
@@ -149,6 +177,13 @@
                                         <a href="{{ route('admin.customers.show', $cliente->id) }}"
                                            class="bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white w-8 h-8 rounded-lg flex items-center justify-center transition-all border border-zinc-700"
                                            title="Ver perfil">
+=======
+                                    <div class="flex justify-end gap-2">
+                                        <a href="https://wa.me/55{{ preg_replace('/[^0-9]/', '', $cliente->whatsapp) }}" target="_blank" class="bg-green-500/10 hover:bg-green-500 text-green-500 hover:text-black w-8 h-8 rounded-lg flex items-center justify-center transition-all border border-green-500/20">
+                                            <i class="fab fa-whatsapp"></i>
+                                        </a>
+                                        <a href="{{ route('admin.customers.show', $cliente->id) }}" class="bg-zinc-800 hover:bg-[#D4AF37] text-zinc-400 hover:text-black w-8 h-8 rounded-lg flex items-center justify-center transition-all border border-zinc-700">
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                                             <i class="fas fa-eye text-[10px]"></i>
                                         </a>
                                     </div>
@@ -160,12 +195,15 @@
                         </tbody>
                     </table>
                 </div>
+<<<<<<< HEAD
 
                 @if($customers->hasPages())
                     <div class="px-6 py-4 border-t border-zinc-800 flex justify-center">
                         {{ $customers->links('pagination::simple-tailwind') }}
                     </div>
                 @endif
+=======
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
             </div>
         </div>
 
@@ -210,4 +248,8 @@
             </div>
         </div>
     </div>
+<<<<<<< HEAD
 @endsection
+=======
+@endsection
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b

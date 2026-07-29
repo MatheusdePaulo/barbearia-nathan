@@ -8,6 +8,7 @@
     }
 }">
     <!-- HERO CONTENT -->
+<<<<<<< HEAD
     <div class="relative min-h-[600px] sm:min-h-[560px] md:min-h-[520px] lg:min-h-[620px] flex items-center bg-[#0A0A0A] overflow-hidden px-6 md:px-12">
 
         <!-- Background Slider: ocupa 100% da largura, sem faixas pretas nas laterais em telas largas -->
@@ -47,14 +48,52 @@
 
                 <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/70 z-10"></div>
             </div>
+=======
+    <div class="relative min-h-[75vh] md:min-h-[60vh] lg:min-h-[70vh] flex items-center bg-[#0A0A0A] overflow-hidden px-6 md:px-12">
+
+        <!-- Background Slider -->
+        <div class="absolute inset-0 z-0">
+            <div x-show="activeSlide === 1"
+                 x-transition:enter="transition opacity duration-[2000ms] ease-in-out"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition opacity duration-[2000ms] ease-in-out"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="absolute inset-0">
+                <img src="{{ asset('images/hero-bg.png') }}"
+                     class="w-full h-full object-cover object-[85%_15%] scale-105 md:scale-100 opacity-80 brightness-110 grayscale-[10%]"
+                     alt="Banner 1">
+            </div>
+
+            <div x-show="activeSlide === 2"
+                 x-transition:enter="transition opacity duration-[2000ms] ease-in-out"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition opacity duration-[2000ms] ease-in-out"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="absolute inset-0">
+                <img src="{{ asset('images/hero-bg2.png') }}"
+                     class="w-full h-full object-cover object-center opacity-80 brightness-110 grayscale-[10%]"
+                     alt="Banner 2">
+            </div>
+
+            <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/70 z-10"></div>
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
         </div>
 
         <!-- CONTEÚDO PRINCIPAL -->
         <div class="relative z-20 w-full max-w-7xl mx-auto pt-10 md:pt-16 text-left md:text-center">
             <div class="max-w-[320px] md:max-w-4xl md:mx-auto">
                 <h2 class="font-barlow font-extrabold text-[2.8rem] md:text-[3.8rem] lg:text-6xl
+<<<<<<< HEAD
                             leading-[1.3] md:leading-[1.15]
                             text-white uppercase tracking-tight mb-4">
+=======
+                           leading-[1.3] md:leading-[1.15]
+                           text-white uppercase tracking-tight mb-4">
+>>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                     NATHAN <br class="block md:hidden">
                     DO CORTE <br>
                     SEU ESTILO <br class="block md:hidden">
