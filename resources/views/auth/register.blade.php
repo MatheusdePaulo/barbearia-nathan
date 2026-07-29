@@ -27,7 +27,6 @@
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
-<<<<<<< HEAD
                             {{-- WHATSAPP (obrigatório) --}}
                             <div class="space-y-1">
                                 <label class="text-[9px] font-black uppercase text-[#D4AF37] ml-2 italic">WhatsApp *</label>
@@ -38,18 +37,6 @@
                             <div class="space-y-1">
                                 <label class="text-[9px] font-black uppercase text-zinc-500 ml-2 italic">Nascimento <span class="text-zinc-600">(opcional)</span></label>
                                 <x-text-input id="birthday" class="block w-full bg-zinc-900/50 border-zinc-800 rounded-2xl py-3.5 px-5 text-white text-sm focus:border-[#D4AF37] focus:ring-0" type="date" name="birthday" :value="old('birthday')" style="color-scheme: dark;" />
-=======
-                            {{-- WHATSAPP --}}
-                            <div class="space-y-1">
-                                <label class="text-[9px] font-black uppercase text-zinc-500 ml-2 italic">WhatsApp</label>
-                                <x-text-input id="phone" class="block w-full bg-zinc-900/50 border-zinc-800 rounded-2xl py-3.5 px-5 text-white text-sm focus:border-[#D4AF37] focus:ring-0" type="text" name="phone" placeholder="(85) 90000-0000" required x-mask="(99) 99999-9999" />
-                            </div>
-
-                            {{-- NASCIMENTO --}}
-                            <div class="space-y-1">
-                                <label class="text-[9px] font-black uppercase text-zinc-500 ml-2 italic">Nascimento</label>
-                                <x-text-input id="birthday" class="block w-full bg-zinc-900/50 border-zinc-800 rounded-2xl py-3.5 px-5 text-white text-sm focus:border-[#D4AF37] focus:ring-0" type="date" name="birthday" required style="color-scheme: dark;" />
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                             </div>
                         </div>
                     </div>
@@ -59,31 +46,18 @@
                     {{-- SEÇÃO: ACESSO --}}
                     <div class="space-y-4">
                         <div class="space-y-1">
-<<<<<<< HEAD
                             <label class="text-[9px] font-black uppercase text-zinc-500 ml-2 italic">E-mail de Acesso <span class="text-zinc-600">(opcional)</span></label>
                             <x-text-input id="email" class="block w-full bg-zinc-900/50 border-zinc-800 rounded-2xl py-3.5 px-5 text-white text-sm focus:border-[#D4AF37] focus:ring-0" type="email" name="email" :value="old('email')" placeholder="email@exemplo.com" />
-=======
-                            <label class="text-[9px] font-black uppercase text-zinc-500 ml-2 italic">E-mail de Acesso</label>
-                            <x-text-input id="email" class="block w-full bg-zinc-900/50 border-zinc-800 rounded-2xl py-3.5 px-5 text-white text-sm focus:border-[#D4AF37] focus:ring-0" type="email" name="email" :value="old('email')" required placeholder="email@exemplo.com" />
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                             <x-input-error :messages="$errors->get('email')" class="mt-1 ml-2" />
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
                             <div class="space-y-1">
-<<<<<<< HEAD
                                 <label class="text-[9px] font-black uppercase text-[#D4AF37] ml-2 italic">Senha *</label>
                                 <x-text-input id="password" class="block w-full bg-zinc-900/50 border-zinc-800 rounded-2xl py-3.5 px-5 text-white text-sm focus:border-[#D4AF37] focus:ring-0" type="password" name="password" required placeholder="••••••••" />
                             </div>
                             <div class="space-y-1">
                                 <label class="text-[9px] font-black uppercase text-[#D4AF37] ml-2 italic">Confirmar *</label>
-=======
-                                <label class="text-[9px] font-black uppercase text-zinc-500 ml-2 italic">Senha</label>
-                                <x-text-input id="password" class="block w-full bg-zinc-900/50 border-zinc-800 rounded-2xl py-3.5 px-5 text-white text-sm focus:border-[#D4AF37] focus:ring-0" type="password" name="password" required placeholder="••••••••" />
-                            </div>
-                            <div class="space-y-1">
-                                <label class="text-[9px] font-black uppercase text-zinc-500 ml-2 italic">Confirmar</label>
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                                 <x-text-input id="password_confirmation" class="block w-full bg-zinc-900/50 border-zinc-800 rounded-2xl py-3.5 px-5 text-white text-sm focus:border-[#D4AF37] focus:ring-0" type="password" name="password_confirmation" required placeholder="••••••••" />
                             </div>
                             <x-input-error :messages="$errors->get('password')" class="col-span-2 mt-1 ml-2" />

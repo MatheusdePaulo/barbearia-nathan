@@ -18,7 +18,6 @@ class AppServiceProvider extends ServiceProvider
      * Bootstrap any application services.
      */
     public function boot(): void
-<<<<<<< HEAD
 {
     // Otimização: Garante que o Laravel use o protocolo HTTPS em produção
     // se estiver rodando na Hostinger para evitar redirecionamentos lentos
@@ -27,9 +26,3 @@ class AppServiceProvider extends ServiceProvider
     }
 }
 }
-=======
-    {
-        //
-    }
-}
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b

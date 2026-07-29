@@ -15,7 +15,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: [
             'webhooks/mercadopago',
         ]);
-<<<<<<< HEAD
 
         // ADICIONADO: Registra o apelido do middleware de admin para usarmos nas rotas
         $middleware->alias([
@@ -25,9 +24,3 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();
-=======
-    })
-    ->withExceptions(function (Exceptions $exceptions) {
-        //
-    })->create();
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b

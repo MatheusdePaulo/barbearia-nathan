@@ -7,14 +7,10 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ServiceAdminController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CustomerController;
-<<<<<<< HEAD
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\ScheduleOverrideController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\CouponController;
-=======
-use App\Http\Controllers\WebhookController; // Adicionado para automação do Pix
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
 use App\Models\Appointment;
 use Illuminate\Support\Facades\Route;
 
@@ -29,21 +25,17 @@ Route::get('/', [ServiceController::class, 'index'])->name('home');
 Route::post('/webhooks/mercadopago', [WebhookController::class, 'handleMercadoPago'])
     ->name('webhooks.mercadopago');
 
-<<<<<<< HEAD
 // Avaliações e cupons (públicos)
 Route::get('/avaliar/cliente', [ReviewController::class, 'form'])->name('reviews.form')->middleware('signed');
 Route::post('/avaliar', [ReviewController::class, 'store'])->name('reviews.store');
 Route::post('/avaliar/cupom', [ReviewController::class, 'generateCoupon'])->name('reviews.generateCoupon');
 Route::post('/agendar/validar-cupom', [CouponController::class, 'validateCoupon'])->name('coupons.validate');
 
-=======
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
 /*
 |--------------------------------------------------------------------------
 | Authenticated Routes
 |--------------------------------------------------------------------------
 */
-<<<<<<< HEAD
 // --- AGENDAMENTOS (Fluxo do Cliente — público, sem login obrigatório) ---
 Route::prefix('agendar')->name('appointments.')->group(function () {
     Route::get('/{service?}', [AppointmentController::class, 'create'])->name('create');
@@ -61,26 +53,6 @@ Route::prefix('agendar')->name('appointments.')->group(function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
-=======
-Route::middleware(['auth', 'verified'])->group(function () {
-
-    // --- AGENDAMENTOS (Fluxo do Cliente) ---
-    Route::prefix('agendar')->name('appointments.')->group(function () {
-        Route::get('/{service?}', [AppointmentController::class, 'create'])->name('create');
-        Route::post('/confirmar', [AppointmentController::class, 'store'])->name('store');
-
-        // ADICIONADA: Rota de Sucesso para o Mercado Pago
-        Route::get('/sucesso', function () {
-            return view('appointments.success');
-        })->name('success');
-
-        Route::get('/status/{id}', function ($id) {
-            $appointment = Appointment::find($id);
-            return response()->json(['status' => $appointment ? $appointment->status : 'not_found']);
-        })->name('status');
-    });
-
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
     // --- PERFIL DO USUÁRIO ---
     Route::get('/dashboard', fn() => redirect('/'))->name('dashboard');
 
@@ -90,17 +62,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/', 'destroy')->name('destroy');
     });
 
-<<<<<<< HEAD
     // --- PAINEL ADMINISTRATIVO PROTEGIDO (Barber Nathan) ---
     // Segura o Mario Balada aqui: Valida se is_admin == 1 antes de dar acesso
     Route::prefix('admin')
         ->name('admin.')
         ->middleware('admin')
         ->group(function () {
-=======
-    // --- PAINEL ADMINISTRATIVO (Barber Nathan) ---
-    Route::prefix('admin')->name('admin.')->group(function () {
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
 
         // Dashboard Principal e Marketing
         Route::get('/', [AdminController::class, 'index'])->name('dashboard');
@@ -135,7 +102,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Agendamento Avulso (Modal da Agenda)
         Route::post('/agenda/avulso', [AppointmentController::class, 'storeAvulso'])->name('appointments.avulso');
 
-<<<<<<< HEAD
         // Override de Horário por Dia
         Route::post('/agenda/horario', [ScheduleOverrideController::class, 'upsert'])->name('schedule.upsert');
         Route::post('/agenda/horario/restaurar', [ScheduleOverrideController::class, 'destroy'])->name('schedule.destroy');
@@ -156,12 +122,3 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 require __DIR__.'/auth.php';
-=======
-        Route::post('/clientes/sorteio', [CustomerController::class, 'draw'])->name('customers.draw');
-
-
-    });
-});
-
-require __DIR__.'/auth.php';
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b

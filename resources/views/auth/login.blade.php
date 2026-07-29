@@ -18,19 +18,11 @@
                 <form method="POST" action="{{ route('login') }}" class="space-y-6">
                     @csrf
 
-<<<<<<< HEAD
                     {{-- LOGIN: EMAIL OU WHATSAPP --}}
                     <div class="space-y-2">
                         <label for="login" class="text-[9px] font-black uppercase text-zinc-500 ml-2 italic tracking-widest">E-mail ou WhatsApp</label>
                         <x-text-input id="login" class="block w-full bg-zinc-900 border-zinc-800 rounded-2xl py-4 px-5 text-white text-sm focus:border-[#D4AF37] focus:ring-0" type="text" name="login" :value="old('login')" required autofocus autocomplete="username" placeholder="email@exemplo.com ou (85) 90000-0000" />
                         <x-input-error :messages="$errors->get('login')" class="mt-2" />
-=======
-                    {{-- EMAIL --}}
-                    <div class="space-y-2">
-                        <label for="email" class="text-[9px] font-black uppercase text-zinc-500 ml-2 italic tracking-widest">E-mail</label>
-                        <x-text-input id="email" class="block w-full bg-zinc-900 border-zinc-800 rounded-2xl py-4 px-5 text-white text-sm focus:border-[#D4AF37] focus:ring-0" type="email" name="email" :value="old('email')" required autofocus />
-                        <x-input-error :messages="$errors->get('email')" class="mt-2" />
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                     </div>
 
                     {{-- PASSWORD --}}

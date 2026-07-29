@@ -14,7 +14,6 @@
         <div class="relative max-w-6xl mx-auto">
 
             <!-- SETAS PADRONIZADAS -->
-<<<<<<< HEAD
             <button aria-label="Anterior" onclick="moveCarousel(-1)"
                     class="absolute left-0 lg:-left-12 top-1/2 -translate-y-1/2 z-40 bg-white shadow-xl w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 flex items-center justify-center rounded-full border border-zinc-100 hover:bg-zinc-50 hover:scale-110 transition-all">
                 <i class="fas fa-chevron-left text-base sm:text-lg md:text-xl text-[#D4AF37]"></i>
@@ -23,23 +22,12 @@
             <button aria-label="Próximo" onclick="moveCarousel(1)"
                     class="absolute right-0 lg:-right-12 top-1/2 -translate-y-1/2 z-40 bg-white shadow-xl w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 flex items-center justify-center rounded-full border border-zinc-100 hover:bg-zinc-50 hover:scale-110 transition-all">
                 <i class="fas fa-chevron-right text-base sm:text-lg md:text-xl text-[#D4AF37]"></i>
-=======
-            <button onclick="moveCarousel(-1)"
-                    class="absolute left-0 lg:-left-12 top-[180px] md:top-[210px] -translate-y-1/2 z-40 bg-white shadow-xl w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-full border border-zinc-100 hover:bg-zinc-50 hover:scale-110 transition-all">
-                <i class="fas fa-chevron-left text-lg md:text-xl text-[#D4AF37]"></i>
-            </button>
-
-            <button onclick="moveCarousel(1)"
-                    class="absolute right-0 lg:-right-12 top-[180px] md:top-[210px] -translate-y-1/2 z-40 bg-white shadow-xl w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-full border border-zinc-100 hover:bg-zinc-50 hover:scale-110 transition-all">
-                <i class="fas fa-chevron-right text-lg md:text-xl text-[#D4AF37]"></i>
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
             </button>
 
             <!-- Janela de Visualização -->
             <div class="overflow-hidden py-10 px-2">
                 <div id="product-track" class="flex gap-4 md:gap-8 items-center transition-transform duration-500 ease-in-out">
 
-<<<<<<< HEAD
                     @foreach($products as $index => $p)
                         <div class="product-card min-w-[85%] md:min-w-[45%] lg:min-w-[31%] transition-all duration-500 scale-90 opacity-40" data-id="{{ $p->id }}">
                             <div class="bg-white rounded-xl p-4 shadow-sm border border-zinc-100 relative">
@@ -51,15 +39,6 @@
                                          loading="lazy"
                                          decoding="async"
                                          class="w-full h-full object-contain transition-opacity duration-300">
-=======
-                    {{-- Aqui injetamos os produtos que vêm do ServiceController --}}
-                    @foreach($products as $p)
-                        <div class="product-card min-w-[85%] md:min-w-[45%] lg:min-w-[31%] transition-all duration-500 scale-90 opacity-40">
-                            <div class="bg-white rounded-xl p-4 shadow-sm border border-zinc-100 relative">
-                                <div class="bg-gradient-to-b from-[#A1887F] to-[#4E342E] rounded-lg p-6 mb-4 aspect-square flex items-center justify-center overflow-hidden">
-                                    {{-- Ajustado para a sua pasta public/images --}}
-                                    <img src="{{ asset('images/' . $p->image) }}" alt="{{ $p->name }}" class="w-full h-full object-contain">
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                                 </div>
                                 <div class="flex justify-between items-start mb-2 text-left h-12">
                                     <h4 class="font-barlow font-bold text-sm md:text-lg text-[#1A1C1E] uppercase leading-tight line-clamp-2">{{ $p->name }}</h4>
@@ -67,7 +46,6 @@
                                         <span class="text-[#D4AF37]">★</span> <span class="text-zinc-600">4.9</span>
                                     </div>
                                 </div>
-<<<<<<< HEAD
 
                                 <!-- OBSERVAÇÃO DE VENDA NO ESTABELECIMENTO -->
                                 <div class="flex flex-col mt-4">
@@ -80,14 +58,6 @@
                                             <i class="fas fa-info text-xs"></i>
                                         </button>
                                     </div>
-=======
-                                <div class="flex justify-between items-center mt-4">
-                                    {{-- Preço real do banco agora aparece aqui --}}
-                                    <span class="font-barlow font-extrabold text-xl text-[#1A1C1E]">R$ {{ number_format($p->price, 2, ',', '.') }}</span>
-                                    <button class="bg-[#717171] hover:bg-[#1A1C1E] text-white w-8 h-8 rounded-full flex items-center justify-center transition-colors">
-                                        <i class="fas fa-plus text-xs"></i>
-                                    </button>
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                                 </div>
                             </div>
                         </div>
@@ -100,18 +70,13 @@
 </section>
 
 <style>
-<<<<<<< HEAD
     #product-track { will-change: transform; backface-visibility: hidden; }
-=======
-    #product-track { will-change: transform; }
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
     .product-card.active {
         scale: 1.05 !important;
         opacity: 1 !important;
         z-index: 10;
         box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
     }
-<<<<<<< HEAD
     .product-card img { pointer-events: none; }
 </style>
 
@@ -124,20 +89,6 @@
         if (originalCards.length === 0) return;
 
         // Clonagem Reforçada
-=======
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-</style>
-
-<script>
-    {{-- Mantive o seu script original exatamente como estava --}}
-    const track = document.getElementById('product-track');
-
-    window.addEventListener('load', () => {
-        let originalCards = Array.from(track.querySelectorAll('.product-card'));
-        const gap = window.innerWidth >= 768 ? 32 : 16;
-
-        // Limpa clones antigos se houver e clona os novos vindos do banco
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
         originalCards.forEach(card => {
             let cloneBefore = card.cloneNode(true);
             let cloneAfter = card.cloneNode(true);
@@ -145,7 +96,6 @@
             track.prepend(cloneBefore);
         });
 
-<<<<<<< HEAD
         // CORREÇÃO DE REFLOW: Armazenar a largura do card fora da função de atualização
         const firstCard = track.querySelector('.product-card');
         const cardWidthFixed = firstCard ? firstCard.offsetWidth + gap : 0;
@@ -159,22 +109,6 @@
 
             track.style.transition = smooth ? "transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)" : "none";
             track.style.transform = `translateX(${-currentIndex * cardWidthFixed + offset}px)`;
-=======
-        let currentIndex = originalCards.length;
-        let isTransitioning = false;
-
-        function getCardWidth() {
-            return track.querySelector('.product-card').offsetWidth + gap;
-        }
-
-        function updateLayout(smooth = true) {
-            const cardWidth = getCardWidth();
-            const containerWidth = track.parentElement.offsetWidth;
-            const offset = (containerWidth / 2) - (cardWidth / 2);
-
-            track.style.transition = smooth ? "transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)" : "none";
-            track.style.transform = `translateX(${-currentIndex * cardWidth + offset}px)`;
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
 
             const allCards = track.querySelectorAll('.product-card');
             allCards.forEach((card, index) => {
@@ -189,18 +123,11 @@
         window.moveCarousel = function(direction) {
             if (isTransitioning) return;
             isTransitioning = true;
-<<<<<<< HEAD
             
             currentIndex += direction;
             updateLayout();
 
             track.addEventListener('transitionend', function handleTransitionEnd() {
-=======
-            currentIndex += direction;
-            updateLayout();
-
-            setTimeout(() => {
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
                 const totalOriginal = originalCards.length;
                 if (currentIndex >= totalOriginal * 2) {
                     currentIndex = totalOriginal;
@@ -210,7 +137,6 @@
                     updateLayout(false);
                 }
                 isTransitioning = false;
-<<<<<<< HEAD
                 track.removeEventListener('transitionend', handleTransitionEnd);
             });
         }
@@ -228,12 +154,3 @@
         });
     });
 </script>
-=======
-            }, 500);
-        }
-
-        updateLayout(false);
-        window.addEventListener('resize', () => updateLayout(false));
-    });
-</script>
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b

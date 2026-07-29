@@ -7,10 +7,7 @@ use App\Models\User;
 use App\Models\ProductSale;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
-<<<<<<< HEAD
 use Illuminate\Support\Facades\DB;
-=======
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
 
 class ProductController extends Controller
 {
@@ -18,15 +15,9 @@ class ProductController extends Controller
     {
         $products = Product::all();
 
-<<<<<<< HEAD
         $hoje = now()->format('m-d');
         // CORREÇÃO: MySQL usa DATE_FORMAT em vez de strftime
         $aniversariantesHoje = User::whereRaw("DATE_FORMAT(birthday, '%m-%d') = ?", [$hoje])->count();
-=======
-        // Mantemos a contagem de aniversariantes para o menu lateral
-        $hoje = now()->format('m-d');
-        $aniversariantesHoje = User::whereRaw("strftime('%m-%d', birthday) = ?", [$hoje])->count();
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
 
         return view('admin.products.index', compact('products', 'aniversariantesHoje'));
     }
@@ -90,7 +81,6 @@ class ProductController extends Controller
             return redirect()->back()->with('error', 'Estoque insuficiente!');
         }
 
-<<<<<<< HEAD
         DB::transaction(function () use ($product, $quantidade) {
             $product->decrement('stock', $quantidade);
 
@@ -113,28 +103,3 @@ class ProductController extends Controller
         return redirect()->back()->with('success', 'Venda realizada e faturamento atualizado!');
     }
 }
-=======
-        // 1. Baixa no Estoque
-        $product->decrement('stock', $quantidade);
-
-        // 2. Registra a Venda no histórico de vendas de produtos
-        ProductSale::create([
-            'product_id' => $product->id,
-            'quantity' => $quantidade,
-            'total_price' => $product->price * $quantidade,
-            'date' => now(),
-        ]);
-
-        // 3. Alimenta a Tabela de Transações com a Categoria CORRETA para o Gráfico
-        Transaction::create([
-            'description' => "Venda: {$product->name} (x{$quantidade})",
-            'amount' => $product->price * $quantidade,
-            'type' => 'income',
-            'category' => 'product', // CRUCIAL: Faz a barra de "Produtos" do gráfico subir
-            'date' => now(),
-        ]);
-
-        return redirect()->back()->with('success', 'Venda realizada e faturamento atualizado!');
-    }
-}
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b

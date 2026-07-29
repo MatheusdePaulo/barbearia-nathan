@@ -6,10 +6,7 @@ use App\Models\Setting;
 use App\Models\User;
 use App\Models\Appointment;
 use App\Models\Service;
-<<<<<<< HEAD
 use App\Models\ScheduleOverride;
-=======
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -21,38 +18,24 @@ class AdminController extends Controller
     public function index()
     {
         $hoje = now()->format('m-d');
-<<<<<<< HEAD
         
         $aniversariantesHoje = User::whereMonth('birthday', now()->month)
                            ->whereDay('birthday', now()->day)
                            ->count();
     
-=======
-        $aniversariantesHoje = User::whereRaw("strftime('%m-%d', birthday) = ?", [$hoje])->count();
-
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
         $stats = [
             'confirmados' => Appointment::where('status', 'confirmed')->count(),
             'pendentes'   => Appointment::where('status', 'pending')->count(),
             'cancelados'  => Appointment::where('status', 'canceled')->count(),
         ];
-<<<<<<< HEAD
     
-=======
-
-        // Carregamos o usuário e o serviço para evitar o erro de N/A
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
         $proximasReservas = Appointment::with(['user', 'service'])
             ->whereDate('date', now())
             ->whereIn('status', ['confirmed', 'pending'])
             ->orderBy('time', 'asc')
             ->take(5)
             ->get();
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
         $visitorsData = [];
         $labels = [];
         for ($i = 6; $i >= 0; $i--) {
@@ -60,7 +43,6 @@ class AdminController extends Controller
             $labels[] = $diaData->translatedFormat('D');
             $visitorsData[] = Appointment::whereDate('date', $diaData->format('Y-m-d'))->count();
         }
-<<<<<<< HEAD
     
         // Receita de Serviços: usa promo_price quando is_promo=true
         $receitaServicos = Appointment::whereIn('status', ['confirmed', 'finished'])
@@ -73,15 +55,6 @@ class AdminController extends Controller
             ->where('category', 'product')
             ->sum('amount');
     
-=======
-
-        $receitaServicos = Appointment::whereIn('status', ['confirmed', 'finished'])
-            ->join('services', 'appointments.service_id', '=', 'services.id')
-            ->sum('services.price');
-
-        $receitaProdutos = 0;
-
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
         return view('admin.dashboard', compact('stats', 'proximasReservas', 'aniversariantesHoje', 'visitorsData', 'labels', 'receitaServicos', 'receitaProdutos'));
     }
 
@@ -89,14 +62,9 @@ class AdminController extends Controller
     {
         $dataSelecionada = $request->query('date', now()->format('Y-m-d'));
 
-<<<<<<< HEAD
         $reservas = Appointment::with(['service', 'services', 'user'])
             ->whereDate('date', $dataSelecionada)
             ->whereNotIn('status', ['expired'])
-=======
-        $reservas = Appointment::with(['service', 'user'])
-            ->whereDate('date', $dataSelecionada)
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
             ->orderByRaw("CASE
                 WHEN status IN ('pending', 'confirmed') THEN 0
                 ELSE 1
@@ -111,7 +79,6 @@ class AdminController extends Controller
         $faturamentoDia = Appointment::whereDate('date', $dataSelecionada)
             ->whereIn('status', ['confirmed', 'finished'])
             ->join('services', 'appointments.service_id', '=', 'services.id')
-<<<<<<< HEAD
             ->sum(DB::raw('CASE WHEN services.is_promo = 1 AND services.promo_price IS NOT NULL THEN services.promo_price ELSE services.price END'));
 
         $scheduleOverride    = ScheduleOverride::forDate($dataSelecionada);
@@ -124,11 +91,6 @@ class AdminController extends Controller
             'reservas', 'hojeCount', 'mesCount', 'faturamentoDia',
             'dataSelecionada', 'scheduleOverride', 'scheduleDescription', 'estaFechado'
         ));
-=======
-            ->sum('services.price');
-
-        return view('admin.agenda', compact('reservas', 'hojeCount', 'mesCount', 'faturamentoDia', 'dataSelecionada'));
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
     }
 
     /**
@@ -210,11 +172,7 @@ class AdminController extends Controller
 
         $faturamentoServicos = (clone $queryBase)
                 ->join('services', 'appointments.service_id', '=', 'services.id')
-<<<<<<< HEAD
                 ->sum(DB::raw('CASE WHEN services.is_promo = 1 AND services.promo_price IS NOT NULL THEN services.promo_price ELSE services.price END'))
-=======
-                ->sum('services.price')
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
             + (clone $queryTrans)->where('type', 'income')->where('category', 'service')->sum('amount');
 
         $faturamentoProdutos = (clone $queryTrans)
@@ -242,11 +200,7 @@ class AdminController extends Controller
             $faturadoMesAgendamentos = Appointment::whereIn('status', ['confirmed', 'finished'])
                 ->whereMonth('date', $mes->month)->whereYear('date', $mes->year)
                 ->join('services', 'appointments.service_id', '=', 'services.id')
-<<<<<<< HEAD
                 ->sum(DB::raw('CASE WHEN services.is_promo = 1 AND services.promo_price IS NOT NULL THEN services.promo_price ELSE services.price END'));
-=======
-                ->sum('services.price');
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
 
             $faturadoMesTransacoes = Transaction::where('type', 'income')
                 ->whereMonth('date', $mes->month)->whereYear('date', $mes->year)
@@ -307,16 +261,12 @@ class AdminController extends Controller
             'email' => auth()->user()->email
         ];
 
-<<<<<<< HEAD
         $reviewCoupon = [
             'active'  => (bool) ($settings['review_coupon_active'] ?? true),
             'percent' => (int)  ($settings['review_coupon_percent'] ?? 5),
         ];
 
         return view('admin.settings', compact('barbearia', 'reviewCoupon'));
-=======
-        return view('admin.settings', compact('barbearia'));
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
     }
 
     public function updateSettings(Request $request)
@@ -340,7 +290,6 @@ class AdminController extends Controller
             return redirect()->back()->with('success', 'Senha atualizada com sucesso!');
         }
 
-<<<<<<< HEAD
         if ($request->has('review_coupon_percent')) {
             $request->validate([
                 'review_coupon_percent' => 'required|integer|min:1|max:100',
@@ -352,8 +301,6 @@ class AdminController extends Controller
             return redirect()->back()->with('success', 'Configurações do cupom de avaliação salvas!');
         }
 
-=======
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
         return redirect()->back();
     }
 }

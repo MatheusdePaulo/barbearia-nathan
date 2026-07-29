@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin | Barber Nathan</title>
-<<<<<<< HEAD
     <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
     <link rel="apple-touch-icon" href="{{ asset('favicon.ico') }}">
-=======
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
@@ -79,10 +76,7 @@
 
         <div class="pt-6">
             <p class="text-[10px] uppercase font-black text-[#D4AF37] tracking-[0.2em] mb-4 ml-4">Marketing</p>
-<<<<<<< HEAD
 
-=======
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
             <a href="{{ route('admin.birthdays') }}" class="flex items-center justify-between px-4 py-3 rounded-xl border transition-all {{ Route::is('admin.birthdays') ? $activeClass : $defaultClass }}">
                 <div class="flex items-center gap-3 font-bold uppercase text-[11px]">
                     <i class="fas fa-birthday-cake w-5"></i> Aniversariantes
@@ -93,7 +87,6 @@
                     </span>
                 @endif
             </a>
-<<<<<<< HEAD
 
             <a href="{{ route('admin.reviews.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl border font-bold uppercase text-[11px] transition-all {{ Route::is('admin.reviews.index') ? $activeClass : $defaultClass }}">
                 <i class="fas fa-star w-5"></i> Avaliações
@@ -102,8 +95,6 @@
             <a href="{{ route('admin.coupons.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl border font-bold uppercase text-[11px] transition-all {{ Route::is('admin.coupons.*') ? $activeClass : $defaultClass }}">
                 <i class="fas fa-ticket-alt w-5"></i> Cupons
             </a>
-=======
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
         </div>
     </nav>
 

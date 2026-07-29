@@ -12,19 +12,12 @@
         "php": "^8.2",
         "laravel/framework": "^13.0",
         "laravel/tinker": "^3.0",
-<<<<<<< HEAD
         "mercadopago/dx-php": "^3.9"
-=======
-        "mercadopago/dx-php": "3.0.1"
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
         "laravel/breeze": "^2.4",
-<<<<<<< HEAD
-=======
         "laravel/pail": "^1.2.5",
->>>>>>> 7ac70fc7c47d14397d5b84571e95502c306b785b
         "laravel/pao": "^1.0.6",
         "laravel/pint": "^1.27",
         "laravel/sail": "^1.58",
