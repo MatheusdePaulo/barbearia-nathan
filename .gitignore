@@ -25,3 +25,8 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 *.Zone.Identifier
+*.sql
+*.zip
+default.php
+otimizar.php
+/Barbearia Nathan/
