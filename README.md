@@ -2,7 +2,7 @@
   <img src="public/images/logotipo_nathan.webp" alt="Nathan do Corte" width="180"/>
 </p>
 
-<h1 align="center">Nathan do Corte — Plataforma SaaS para Barbearia</h1>
+<h1 align="center">Nathan do Corte - Plataforma SaaS para Barbearia</h1>
 
 <p align="center">
   Sistema web completo com agendamento online, painel administrativo e integração com Mercado Pago.
